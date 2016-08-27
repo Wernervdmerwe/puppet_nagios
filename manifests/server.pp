@@ -1,4 +1,6 @@
-class nagios::server {
+class nagios::server (
+  $graphios = true,
+){
 
   resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]: purge => true, }
 
@@ -54,7 +56,11 @@ class nagios::server {
   }
 
   include nagios::collect_checks
-  include nagios::graphios
+
+  if $graphios == true { 
+    include nagios::graphios
+    notify{"Installing Graphios":}
+  }
 
   $nagios_extra_hosts = hiera(nagios_hosts,undef)
   if $nagios_extra_hosts { create_resources(nagios_host, $nagios_extra_hosts)  }
