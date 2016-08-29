@@ -23,15 +23,15 @@ Usage
 -----
 ### Server:
 node nagios {  
-  class { 'nagios':  
-    role         => 'server',  
-    graphite_host => $graphite_host  
+    class { 'nagios':  
+      role         => 'server',  
+      graphite_host => $graphite_host  
   }  
 }
 
 ### Client
 node client {  
-  include nagios  
+    include nagios  
 }  
 
 Hieradata
@@ -39,7 +39,7 @@ Hieradata
 
 Extra plugins can be added in hiera as follows:
 
-nagios_plugins:
+nagios_plugins:  
   - nagios::plugin::notify
 
 This will include the notify plugin on this host.
