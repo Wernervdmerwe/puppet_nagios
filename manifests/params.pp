@@ -1,4 +1,4 @@
 class nagios::params {
-  $role             = 'client',
+  $role             = 'client'
   $graphios_install = true
 }
