@@ -9,31 +9,30 @@ It relies on exported resources to auto-add clients, thus requires puppetDB to b
 The module also optionally installs and configures Graphios in order to send results to a Graphite server.
 
 Standard checks deployed on all hosts:
-  *
-  1. Load Per Core
-  2. Swap Usage
-  3. Logged On Users
-  4. Disk Usage
-  5. Zombie Processes
-  6. Memory Usage
-  7. Puppet Agent Status
-  8. SSH
-  9. PING
+- Load Per Core
+- Swap Usage
+- Logged On Users
+- Disk Usage
+- Zombie Processes
+- Memory Usage
+- Puppet Agent Status
+- SSH
+- PING
 
 Usage
 -----
 ### Server:
-node nagios {
-  class { 'nagios':
-    role         => 'server',
-    grahite_host => $graphite_host
-  }
+node nagios {  
+  class { 'nagios':  
+    role         => 'server',  
+    graphite_host => $graphite_host  
+  }  
 }
 
 ### Client
-node client {
-  include nagios
-}
+node client {  
+  include nagios  
+}  
 
 Hieradata
 ---------
@@ -53,24 +52,24 @@ nagios_hostgroup: 'admin'
 This will add the host to both the Linux and admin hostgroups.
 
 ### NRPE 
-  nrpe::dont_blame_nrpe: 0
-  nrpe::allowed_hosts:
-    - '127.0.0.1'
-    - '192.168.0.1'
+  nrpe::dont_blame_nrpe: 0  
+  nrpe::allowed_hosts:  
+    - '127.0.0.1'  
+    - '192.168.0.1'  
 
 ### Contacts
-  nagios::contacts:
-    nagiosadmin:
-      contact_name: nagiosadmin
-      alias: 'Nagios Admin'
-      ensure: 'present'
-      email: nagiosadmin@example.com
+  nagios::contacts:  
+    nagiosadmin:  
+      contact_name: nagiosadmin  
+      alias: 'Nagios Admin'  
+      ensure: 'present'  
+      email: nagiosadmin@example.com  
 
 ### Override defaults
-  nagios::plugin::nrpe_core_load::warn: 4
+  nagios::plugin::nrpe_core_load::warn: 4  
   nagios::plugin::nrpe_core_load::crit: 8
 
 Credits
 -------
-This is a collection of modules written by their respective owners.
+This is a collection of modules written by their respective owners.  
 All credit goes to the respective authors
