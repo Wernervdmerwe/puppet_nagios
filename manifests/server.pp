@@ -1,5 +1,6 @@
 class nagios::server (
   $graphios_install = $nagios::params::graphios_install
+  $graphite_host = $nagios::params::graphite_host
 ){
 
   resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]: purge => true, }

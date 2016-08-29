@@ -4,8 +4,8 @@ class nagios::nagios_client {
   if $nagios_hg { $hostgroups = "${::kernel}, ${nagios_hg}" }
   else { $hostgroups = $::kernel }
 
-  $node_checks = hiera_array('classes',undef)
-  if $node_checks { hiera_include('classes') }
+  $nagios_plugins = hiera_array('nagios_plugins',undef)
+  if $nagios_plugins { hiera_include('nagios_plugins') }
 
   package { [ 'nagios-plugins-nrpe', 'nagios-plugins', 'PyYAML' ]: ensure => installed, }
 
