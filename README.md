@@ -24,8 +24,9 @@ Usage
 ### Server:
 node nagios {  
 &nbsp;&nbsp;class { 'nagios':  
-&nbsp;&nbsp;&nbsp;&nbsp;role         => 'server',  
-&nbsp;&nbsp;&nbsp;&nbsp;graphite_host => $graphite_host  
+&nbsp;&nbsp;&nbsp;&nbsp;role             => 'server',  
+&nbsp;&nbsp;&nbsp;&nbsp;graphios_install => true,  
+&nbsp;&nbsp;&nbsp;&nbsp;graphite_host    => $graphite_host  
 &nbsp;&nbsp;}  
 }
 
