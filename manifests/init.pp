@@ -1,6 +1,4 @@
-class nagios (
-  $role = hiera(nagios::role,'client')
-){
+class nagios () inherits nagios::params {
 
   # Service Defaults
   Nagios_service {

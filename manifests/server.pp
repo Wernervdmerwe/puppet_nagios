@@ -1,5 +1,5 @@
 class nagios::server (
-  $graphios = true,
+  $graphios_install = $nagios::params::graphios_install
 ){
 
   resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]: purge => true, }
@@ -57,7 +57,7 @@ class nagios::server (
 
   include nagios::collect_checks
 
-  if $graphios == true { 
+  if $graphios_install == true {
     include nagios::graphios
     notify{"Installing Graphios":}
   }
