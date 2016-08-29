@@ -1,5 +1,5 @@
 class nagios::graphios (
-  $graphite_host = hiera(graphite_host)
+  $graphite_host = nagios::params::graphite_host
 ){
 
   package { ['python-pip','redhat-lsb-core']: ensure => 'installed', }
