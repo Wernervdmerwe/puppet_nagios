@@ -37,19 +37,25 @@ node client {
 Hieradata
 ---------
 
-Extra plugins can be added in hiera as follows:
+Extra plugins can be added in hiera as follows:  
 
 nagios_plugins:  
-  - nagios::plugin::notify
+  - nagios::plugin::notify  
 
 This will include the notify plugin on this host.
 
 ### Hostgroups
-All Linux servers will be added to the Linux group. Extra groups can be added by using the following:
+Hostgroups have two steps, first create all the hostgroups in quetion:  
+nagios::hostgroups:  
+  Linux:  
+   alias: 'Linux Servers'  
+  admin-prod:  
+    alias: 'Admin Servers - Production'  
 
-nagios_hostgroup: 'admin'
+Then add the servers into the groups by adding a lookup in the node:  
+nagios_hostgroup: 'admin-prod'
 
-This will add the host to both the Linux and admin hostgroups.
+This will add the host to both the Linux and Production Admin hostgroups.
 
 ### NRPE 
   nrpe::dont_blame_nrpe: 0  
