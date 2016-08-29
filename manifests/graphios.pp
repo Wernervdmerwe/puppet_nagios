@@ -52,9 +52,10 @@ class nagios::graphios (
   }
 
   file {'/etc/graphios/graphios.cfg':
-    ensure => 'file',
+    ensure  => 'file',
     #source => 'puppet:///modules/nagios/graphios.cfg',
     content => epp('nagios/graphios.cfg.epp', {graphite_host => $graphite_host }),
+    notify  => Service['graphios'],
   }
 
   file {'/etc/init.d/graphios':
