@@ -1,0 +1,21 @@
+{
+      "name": "puppet_nagios",
+      "version": "0.0.1",
+      "author": "Werner vd Merwe",
+      "license": "",
+      "summary": "Nagios module for server and client",
+      "source": "https://github.com/wernervdmerwe/puppet_nagios",
+      "project_page": "",
+      "issues_url": "",
+      "tags": ["puppet", "nagios"],
+      "operatingsystem_support": [
+        {
+        "operatingsystem":"RedHat",
+        "operatingsystemrelease":[ "7.x" ]
+        },
+       ],
+      "dependencies": [
+        { "name": "puppetlabs/stdlib", "version_requirement": ">= 3.2.0 < 5.0.0" },
+      ],
+      "data_provider": "hiera"
+    }
