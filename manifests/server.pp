@@ -60,7 +60,6 @@ class nagios::server (
 
   if $graphios_install == true {
     include nagios::graphios
-    notify{"Installing Graphios":}
   }
 
   $nagios_extra_hosts = hiera(nagios_hosts,undef)
