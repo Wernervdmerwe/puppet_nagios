@@ -12,6 +12,10 @@ class nagios::plugin::nrpe_website(
   $weburl
 ){
 
+  package {'netcat':
+    ensure => 'present',
+  }
+
   nrpe::plugin { 'check_website_response':
       ensure => present,
       source => 'puppet:///modules/nagios/check_website_response',
