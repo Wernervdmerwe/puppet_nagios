@@ -14,10 +14,9 @@ class nagios::plugin::nrpe_website(
 
   nrpe::plugin { 'check_website_response':
       ensure => present,
-      source => 'puppet:///modules/nagios/check_website_response.sh',
+      source => 'puppet:///modules/nagios/check_website_response',
       notify => Service['nrpe'],
   }
-
 
 # NRPE Command
   nrpe::command { 'check_website_response':
@@ -26,8 +25,8 @@ class nagios::plugin::nrpe_website(
   }
 
 # Nagios Check
-  @@nagios_service {"Check Site $::hostname $site":
-    check_command => "check_nrpe!check_website_response -u $site",
+  @@nagios_service {"Check Site $::hostname $weburl":
+    check_command => "check_nrpe!check_website_response -u $weburl",
     service_description => "Response from $site",
     host_name => $::fqdn,
   }
