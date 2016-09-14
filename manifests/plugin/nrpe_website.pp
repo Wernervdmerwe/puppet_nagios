@@ -12,12 +12,14 @@ class nagios::plugin::nrpe_website(
   $weburl
 ){
 
-## NRPE Command
-#  nrpe::command { 'check_website_response':
-#    ensure  => present,
-#    command => "check_website_response.sh -w ${warn} -c ${crit}";
-#  }
-#
+  notify {"Setting up for $weburl":}
+
+# NRPE Command
+  nrpe::command { 'check_website_response':
+    ensure  => present,
+    command => "check_website_response.sh -w ${warn} -c ${crit}";
+  }
+
 ## Nagios Check
 #  @@nagios_service {"Check Site $::hostname $site":
 #    check_command => "check_nrpe!check_website_response -u $site",
