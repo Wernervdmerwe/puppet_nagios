@@ -25,12 +25,13 @@ class nagios::plugin::nrpe_website(
 # NRPE Command
   nrpe::command { 'check_website_response':
     ensure  => present,
-    command => "check_website_response -w ${warn} -c ${crit}";
+    command => "check_website_response -w ${warn} -c ${crit} -u \"${weburl}\"";
   }
 
 # Nagios Check
   @@nagios_service {"Check Site $::hostname $weburl":
-    check_command => "check_nrpe!check_website_response!\'-w $warn -c $crit -u $weburl\'",
+    #check_command => "check_nrpe!check_website_response!\'-w $warn -c $crit -u $weburl\'",
+    check_command => "check_nrpe!check_website_response!$weburl",
     service_description => "Response from $weburl",
     target => '/etc/nagios/conf.d/nagios_service.cfg',
     host_name => $::fqdn,
