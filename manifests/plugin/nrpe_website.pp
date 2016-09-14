@@ -9,7 +9,7 @@
 class nagios::plugin::nrpe_website(
   $warn = 2000,
   $crit = 5000,
-  $site
+  $site = $title
 ){
 
 # NRPE Command
