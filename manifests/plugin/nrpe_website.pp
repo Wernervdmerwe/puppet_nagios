@@ -22,7 +22,7 @@ class nagios::plugin::nrpe_website(
 # NRPE Command
   nrpe::command { 'check_website_response':
     ensure  => present,
-    command => "check_website_response.sh -w ${warn} -c ${crit}";
+    command => "check_website_response -w ${warn} -c ${crit}";
   }
 
 # Nagios Check
