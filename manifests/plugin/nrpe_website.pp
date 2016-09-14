@@ -32,7 +32,7 @@ class nagios::plugin::nrpe_website(
 # Nagios Check
   @@nagios_service {"Check Site $::hostname $weburl":
     #check_command => "check_nrpe!check_website_response!\'-w $warn -c $crit -u $weburl\'",
-    check_command => "check_nrpe!check_website_response!$weburl",
+    check_command => "check_nrpe!check_website_response!$warn!$crit!\"$weburl\"",
     service_description => "Response from $weburl",
     target => '/etc/nagios/conf.d/nagios_service.cfg',
     host_name => $::fqdn,
