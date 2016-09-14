@@ -34,5 +34,6 @@ class nagios::plugin::nrpe_website(
     service_description => "Response from $weburl",
     target => '/etc/nagios/conf.d/nagios_service.cfg',
     host_name => $::fqdn,
+    use => 'generic-service',
   }
 }
