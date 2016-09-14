@@ -25,7 +25,7 @@ class nagios::plugin::nrpe_website(
 # NRPE Command
   nrpe::command { 'check_website_response':
     ensure  => present,
-    command => 'check_website_response -w $ARG1$ -c $ARG2$ -u "$ARG3$"';
+    command => 'check_website_response -w $ARG1$ -c $ARG2$ -u "$ARG3$" -nocert';
   }
 
 # Nagios Check
