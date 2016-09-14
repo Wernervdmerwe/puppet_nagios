@@ -1,0 +1,100 @@
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="-1" />
+		<title>Education Sector Application</title>
+				<link href="/useradmin-native/styles/externalstyle.css" type="text/css" rel="stylesheet" />
+		<link href="/useradmin-native/styles/decorator.css" type="text/css" rel="stylesheet" />
+
+        <script src="/useradmin-native/script/sectorfacing.js" type="text/javascript"></script>
+	</head>
+
+	<body onload="onLoad()" style="margin: 0; padding: 0">
+		
+				<div id="bannerConnect"></div>
+
+		
+		<div id="content">
+		  <table width="100%">
+		    <tr>
+		      <td width="200" valign="top">
+		        <p>&nbsp;</p>
+		      </td>
+		      <td valign="top">
+				<div id="content">
+<form method="post" action="" name="logon" >
+	<h1>Education Sector Logon</h1> 
+	
+	<font class="error_text">&nbsp;</font><br/>
+	<table> 
+		<tr> 
+			<td nowrap="nowrap"><strong>User ID</strong><br/></td> 
+			<td>
+			
+				
+				
+					<input type="text" name="userid" autocomplete="off" tabIndex="1" style="width:145px;"/>
+	            
+			
+            </td> 
+			<td valign="top" rowspan="5" width="50">
+				&nbsp;
+			</td>
+			<td valign="top" rowspan="5">
+				 
+					<br/> 
+					<br/> 
+					<!-- <a href="../../docs/RegisterCertificate.pdf" class="nav_link_font" target="_blank">Register a digital certificate</a><br/><br/> -->
+                    <a href="/useradmin-native/jsp/user/challengePassword.jsp" class="nav_link_font"><b>Forgotten your password?</b></a><br/>
+				
+				<a href="certLogon.jsp?command=Cert&contextSelectionRequired=false&amp;goto=https%3A%2F%2Fsecurity.education.govt.nz%3A443%2Fuseradmin-native%2Fjsp%2Fadmin%2FsearchMenuScreen.jsp" class="nav_link_font"></a><br/>
+                <a href="/useradmin-native/jsp/help/setup.jsp" target="_blank" class="nav_link_font"></a> 
+			</td>
+		</tr> 
+		<tr> 
+			<td nowrap="nowrap"><strong>Password</strong></td> 
+			<td><input type="password" name="password" autocomplete="off" tabIndex="2" style="width:145px;"/></td> 
+		</tr> 
+		<tr> 
+			<td class="body_text" nowrap="nowrap">&nbsp;</td> 
+			<td valign="top" nowrap="nowrap"
+				><input type="submit" name="command" class="invisiblebutton" value='Logon' onclick="return validateLogon()"
+				/><input name="command" type="submit" class="button_size" value='Logon' tabIndex="3" onclick="return validateLogon()"/>
+			</td> 
+		</tr>
+		<tr> 
+			<td colspan="2" rowspan="2">&nbsp;</td> 
+		</tr> 
+	</table>
+	<br/>
+	<p>If you are having difficulty logging in, please call the Ministry of Education Service Desk on 0800 422 599 or email <a href="mailto:moe.servicedesk@education.govt.nz">moe.servicedesk@education.govt.nz</a></p>
+	
+		<input type="hidden" name="goto" value="https://security.education.govt.nz:443/useradmin-native/jsp/admin/searchMenuScreen.jsp" />
+	
+</form>
+</div>
+		      </td>
+			</tr>
+		  </table>
+		</div>
+		
+				<div id="footerConnect">
+		    <a href='/useradmin-native/jsp/help/about.jsp?previous=/useradmin-native/jsp/logon/logon.jsp?contextSelectionRequired=false&amp;goto=https%3A%2F%2Fsecurity.education.govt.nz%3A443%2Fuseradmin-native%2Fjsp%2Fadmin%2FsearchMenuScreen.jsp' class='nav_link_font'>About Connecting the Sector</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+		    <a href='/useradmin-native/jsp/help/logon.jsp' target='help' class='nav_link_font separated'>Help?</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+		    <a href='/useradmin-native/jsp/help/privacy.jsp?previous=/useradmin-native/jsp/logon/logon.jsp?contextSelectionRequired=false&amp;goto=https%3A%2F%2Fsecurity.education.govt.nz%3A443%2Fuseradmin-native%2Fjsp%2Fadmin%2FsearchMenuScreen.jsp' class='nav_link_font separated'>Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href='/useradmin-native/jsp/help/conditionsOfUse.jsp?previous=/useradmin-native/jsp/logon/logon.jsp?contextSelectionRequired=false&amp;goto=https%3A%2F%2Fsecurity.education.govt.nz%3A443%2Fuseradmin-native%2Fjsp%2Fadmin%2FsearchMenuScreen.jsp' class='nav_link_font separated'>Conditions of Use</a>
+		</div>
+
+
+
+
+			
+	</body>
+</html>
