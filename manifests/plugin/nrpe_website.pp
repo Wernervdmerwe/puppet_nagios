@@ -12,7 +12,7 @@ class nagios::plugin::nrpe_website(
   $weburl
 ){
 
-  package {'netcat':
+  package {'nmap':
     ensure => 'present',
   }
 
