@@ -12,6 +12,13 @@ class nagios::plugin::nrpe_website(
   $weburl
 ){
 
+  nrpe::plugin { 'check_website_response':
+      ensure => present,
+      source => 'puppet:///modules/nagios/check_website_response.sh',
+      notify => Service['nrpe'],
+  }
+
+
 # NRPE Command
   nrpe::command { 'check_website_response':
     ensure  => present,
