@@ -22,6 +22,6 @@ class nagios::plugin::nrpe_website(
   @@nagios_service {"Check Site $::hostname $site":
     check_command => "check_nrpe!check_website_response -u $site",
     service_description => "Response from $site",
-    hostname => $::fqdn,
+    host_name => $::fqdn,
   }
 }
