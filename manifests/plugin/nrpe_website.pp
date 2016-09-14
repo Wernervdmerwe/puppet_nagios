@@ -5,6 +5,7 @@
 #command_line $USER1$/check_website_response.sh -u $ARG1$ -w $ARG2$ -c $ARG3$ $ARG4$
 #check_command check_website_response!"http://www.domain.com/index.html"!3000!4000!-nocert
 
+
 class nagios::plugin::nrpe_website(
   $warn = 2000,
   $crit = 5000,
@@ -12,8 +13,14 @@ class nagios::plugin::nrpe_website(
 ){
 
 # NRPE Command
-  nrpe::command { 'check_website_response.sh':
+  nrpe::command { 'check_website_response':
     ensure  => present,
-    command => "check_website_response.sh -w ${warn} -c ${crit} -u ${site}";
+    command => "check_website_response.sh -w ${warn} -c ${crit}";
+  }
+
+# Nagios Check
+  @@nagios_service {"Check Site $::hostname $site":
+    check_command => "check_nrpe!check_website_response -u $site",
+    service_description => "Response from $site",
   }
 }
