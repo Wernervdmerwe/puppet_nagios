@@ -1,6 +1,6 @@
 class nagios::plugin::nrpe_disks (
-  $warn = '15%',
-  $crit = '10%'
+  $warn = '10%',
+  $crit = '5%'
 ){
 
 # NRPE Command
