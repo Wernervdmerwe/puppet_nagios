@@ -6,7 +6,7 @@ class nagios::plugin::nrpe_disks (
 # NRPE Command
   nrpe::command { 'check_disks':
     ensure  => present,
-    command => "check_disk -L -w 15% -c 10% -e -f -M -A";
+    command => "check_disk -L -w $warn -c $crit -e -f -M -A";
   }
 
 # Nagios Check
