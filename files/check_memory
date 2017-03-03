@@ -59,13 +59,13 @@ result=$(($useAux/$total))
 
 ## Código para debug
 if [ "$result" -lt "$warn_level" ]; then
-    echo "Memory OK. $result% used. Using $used MB  out of $total MB| 'Memory %'=$result%;$warn_level;$critical_level"
+    echo "Memory OK. $result% used. Using $used MB  out of $total MB| Memory %=$result%;$warn_level;$critical_level"
     exit 0;
 elif [ "$result" -ge "$warn_level" ] && [ "$result" -le "$critical_level" ]; then
-    echo "Memory WARNING. $result% used. Using $used MB out of $total MB| 'Memory %'=$result;$warn_level;$critical_level%"
+    echo "Memory WARNING. $result% used. Using $used MB out of $total MB| Memory %=$result;$warn_level;$critical_level%"
     exit 1;
 elif [ "$result" -gt "$critical_level" ]; then
-    echo "Memory CRITICAL. $result% used. Using $used MB out of $total MB| 'Memory %'=$result%;$warn_level;$critical_level"
+    echo "Memory CRITICAL. $result% used. Using $used MB out of $total MB| Memory %=$result%;$warn_level;$critical_level"
     exit 2;
 fi
 
