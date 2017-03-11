@@ -1,6 +1,6 @@
 class nagios::plugin::nrpe_procs (
-  $warn = 220,
-  $crit = 250
+  $warn = 400,
+  $crit = 500
 ){
 
 # NRPE Command
