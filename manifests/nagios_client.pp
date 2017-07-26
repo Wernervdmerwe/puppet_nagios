@@ -21,7 +21,7 @@ class nagios::nagios_client (
     notify     => Service['nagios'],
   }
 
-  if $nagios_host {
+  if $nagios_server {
     firewalld_rich_rule { "Allow NRPE port from nagios server ${nagios_server}":
       ensure => present,
       source => "${nagios_server}/32",
