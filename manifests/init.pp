@@ -1,5 +1,6 @@
 class nagios (
-  $role = $nagios::params::role
+  $role = $nagios::params::role,
+  $nagios_server = undef
 ) inherits nagios::params {
 
   # Service Defaults

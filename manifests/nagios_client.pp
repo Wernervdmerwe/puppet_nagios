@@ -1,5 +1,5 @@
 class nagios::nagios_client (
-  $nagios_server = undef
+  $nagios_server = $nagios::nagios_server
 ){
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
