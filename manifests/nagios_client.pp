@@ -1,4 +1,6 @@
-class nagios::nagios_client {
+class nagios::nagios_client (
+  $nagios_server = undef
+){
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
   if $nagios_hg { $hostgroups = "${::kernel}, ${nagios_hg}" }
@@ -17,6 +19,25 @@ class nagios::nagios_client {
     hostgroups => $hostgroups,
     target     => '/etc/nagios/conf.d/nagios_host.cfg',
     notify     => Service['nagios'],
+  }
+
+  if $nagios_host {
+    firewalld_rich_rule { "Allow NRPE port from nagios server ${nagios_server}":
+      ensure => present,
+      source => "${nagios_server}/32",
+      action => 'accept',
+      port   => {
+        'port'     => '5666',
+        'protocol' => 'tcp',
+      },
+    }
+
+    file_line { 'Add nagios server to NRPE allowed_hosts':
+      ensure => present,
+      path   => '/etc/nagios/nrpe.cfg',
+      line   => "allowed_hosts=${nagios_server}",
+      match  => '^allowed_hosts=',
+    }
   }
 
   include nagios::standard_checks
