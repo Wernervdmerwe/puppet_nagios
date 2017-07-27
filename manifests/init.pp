@@ -1,6 +1,6 @@
 class nagios (
   $role = $nagios::params::role,
-  $nagios_server = undef
+  $nagios_servers = lookup('nrpe::allowed_hosts', Array[String], 'first', undef)
 ) inherits nagios::params {
 
   # Service Defaults
