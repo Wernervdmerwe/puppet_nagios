@@ -15,12 +15,12 @@ class nagios::server (
 
   package { [ 'nagios' ]: ensure  => installed,  }
 
-  Nagios_contact { target => '/etc/nagios/conf.d/nagios_contact.cfg', }
-  Nagios_command { target => '/etc/nagios/conf.d/nagios_command.cfg', }
-  Nagios_host { target => '/etc/nagios/conf.d/nagios_host.cfg', }
+  Nagios_contact   { target => '/etc/nagios/conf.d/nagios_contact.cfg', }
+  Nagios_command   { target => '/etc/nagios/conf.d/nagios_command.cfg', }
+  Nagios_host      { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
   Nagios_hostgroup { target => '/etc/nagios/conf.d/nagios_hostgroup.cfg', }
   Nagios_contactgroup { target => '/etc/nagios/conf.d/nagios_contactgroup.cfg', }
-  Nagios_service { target => '/etc/nagios/conf.d/nagios_service.cfg', }
+  Nagios_service   { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
 
   $nagios_contacts = hiera_hash('nagios::contacts',undef)
   if $nagios_contacts { create_resources (nagios_contact, $nagios_contacts) }
@@ -37,10 +37,10 @@ class nagios::server (
     mode    => '0664',
   }
 
-  file { [ '/etc/nagios/conf.d/nagios_command.cfg', '/etc/nagios/conf.d/nagios_contact.cfg', '/etc/nagios/conf.d/nagios_host.cfg', '/etc/nagios/conf.d/nagios_hostgroup.cfg', '/etc/nagios/conf.d/nagios_service.cfg' ]:
+  file { [ '/etc/nagios/conf.d/nagios_command.cfg', '/etc/nagios/conf.d/nagios_contact.cfg', '/etc/nagios/conf.d/nagios_host.cfg', '/etc/nagios/conf.d/nagios_hostgroup.cfg', '/etc/nagios/conf.d/nagios_service.cfg', "/etc/nagios/conf.d/${::fqdn}.cfg" ]:
     ensure => 'file',
     mode   => '0644',
-    owner  => 'root',
+    owner  => 'nagios',
     group  => 'nagios',
   }
 

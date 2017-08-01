@@ -17,9 +17,18 @@ class nagios::nagios_client (
     address    => $::ipaddress,
     use        => 'linux-server',
     hostgroups => $hostgroups,
-    target     => '/etc/nagios/conf.d/nagios_host.cfg',
+    target     => "/etc/nagios/conf.d/${::fqdn}.cfg",
     notify     => Service['nagios'],
   }
+
+  @@file { "/etc/nagios/conf.d/${::fqdn}.cfg":
+    ensure => 'file',
+    mode   => '0644',
+    owner  => 'nagios',
+    group  => 'nagios',
+    tag    => 'nagios_clients'
+  }
+
 
   if $nagios_servers {
     $nagios_servers.each |String $nagios_server| {

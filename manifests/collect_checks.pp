@@ -9,9 +9,10 @@ class nagios::collect_checks {
   }
 
   Nagios_host {
-    check_interval => 1,
-    retry_interval => 1,
+    check_interval     => 1,
+    retry_interval     => 1,
     max_check_attempts => 2,
+    target             => "/etc/nagios/conf.d/${::fqdn}.cfg"
   }
 
   Nagios_service {
@@ -21,10 +22,12 @@ class nagios::collect_checks {
     ensure              => 'present',
     use                 => 'generic-service',
     notification_period => '24x7',
+    target              => "/etc/nagios/conf.d/${::fqdn}.cfg"
   }
 
   # Collect resources and populate /etc/nagios/nagios_*.cfg
-  Nagios_host <<||>> { notify        => Service['nagios'] }
-  Nagios_service <<||>> { notify     => Service['nagios'] }
+  File <<| tag == 'nagios_clients' |>> { notify => Service['nagios'] }
+  Nagios_host <<||>> { notify => Service['nagios'] }
+  Nagios_service <<||>> { notify => Service['nagios'] }
   Nagios_hostextinfo <<||>> { notify => Service['nagios'] }
 }
