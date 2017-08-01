@@ -1,13 +1,14 @@
-class nagios::nagios_nrpe {
+class nagios::nagios_nrpe (
+  $plugin_packages = ['procs', 'http', 'tcp', 'pgsql'],
+){
 
   include 'nrpe'
   include 'sudo'
 
-  $plugin_packages = ['procs', 'http', 'tcp', 'pgsql'],
   $plugin_packages.each |$plugin| {
-    package { "nagios-plugins-${plugin}":
-    }
+    package { "nagios-plugins-${plugin}": }
   }
+
   nrpe::plugin { 'check_systemd':
     ensure => present,
     source => "puppet:///modules/${module_name}/check_systemd.sh",
