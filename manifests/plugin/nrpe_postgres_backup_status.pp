@@ -1,6 +1,6 @@
 class nagios::plugin::nrpe_postgres_backup_status {
 
-  nrpe::plugin { 'nrpe_postgres_backup_status.sh':
+  nrpe::plugin { 'check_postgres_backup.sh':
       ensure => present,
       source => 'puppet:///modules/nagios/check_postgres_backup.sh',
       notify => Service['nrpe'],
