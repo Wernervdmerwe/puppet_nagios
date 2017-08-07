@@ -14,17 +14,17 @@ if [ -f ${statusFileLocation}/${statusFileName} ]; then
         exit 0
       elif [ "$status" == "NOK" ]; then
         echo "CRITICAL - Last backup was NOT successfull!"
-        exit 1
+        exit 2
       else
         echo "CRITICAL - Could not retrieve the status!"
-        exit 1
+        exit 2
       fi
     else
       echo "CRITICAL - Backud status file is older then 24h!!"
-      exit 1
+      exit 2
     fi
   fi
 else
   echo "Status file doesn't exist."
-  exit 2
+  exit 1
 fi
