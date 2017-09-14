@@ -29,12 +29,13 @@ class nagios::plugin::nrpe_website(
   }
 
 # Nagios Check
-  @@nagios_service {"Check Site $::hostname $weburl":
-    #check_command => "check_nrpe!check_website_response!$warn!$crit!\"$weburl\"",
-    check_command => "check_nrpe!check_website_response -a $warn $crit \"$weburl\"",
-    service_description => "Response from $weburl",
-    target => "/etc/nagios/conf.d/${::fqdn}.cfg",
-    host_name => $::fqdn,
-    use => 'generic-service',
+  $weburl.each |String $site| {
+    @@nagios_service {"Check Site ${::hostname} ${site}":
+      check_command       => "check_nrpe!check_website_response -a ${warn} ${crit} \"${site}\"",
+      service_description => "Response from ${site}",
+      target              => "/etc/nagios/conf.d/${::fqdn}.cfg",
+      host_name           => $::fqdn,
+      use                 => 'generic-service',
+    }
   }
 }
