@@ -19,7 +19,7 @@ class nagios::server (
   Nagios_command   { target => '/etc/nagios/conf.d/nagios_command.cfg', }
   Nagios_host      { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
   Nagios_hostgroup { target => '/etc/nagios/conf.d/nagios_hostgroup.cfg', }
-  Nagios_contactgroup { target => '/etc/nagios/conf.d/nagios_contactgroup.cfg', }
+  Nagios_contactgroup { target => '/etc/nagios/conf.d/contacts.cfg', }
   Nagios_service   { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
 
   $nagios_contacts = hiera_hash('nagios::contacts',undef)
