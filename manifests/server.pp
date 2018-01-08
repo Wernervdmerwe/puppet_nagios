@@ -11,16 +11,14 @@ class nagios::server (
   }
   include apache::mod::php
 
-  package { [ 'nagios-plugins', 'nagios-plugins-nrpe' ]: ensure => installed, }
+  package { [ 'nagios','nagios-plugins', 'nagios-plugins-nrpe' ]: ensure => installed, }
 
-  package { [ 'nagios' ]: ensure  => installed,  }
-
-  Nagios_contact   { target => '/etc/nagios/conf.d/nagios_contact.cfg', }
-  Nagios_command   { target => '/etc/nagios/conf.d/nagios_command.cfg', }
-  Nagios_host      { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
-  Nagios_hostgroup { target => '/etc/nagios/conf.d/nagios_hostgroup.cfg', }
-  Nagios_contactgroup { target => '/etc/nagios/conf.d/contacts.cfg', }
-  Nagios_service   { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
+  Nagios_contact      { target => '/etc/nagios/objects/contacts.cfg', }
+  Nagios_contactgroup { target => '/etc/nagios/objects/contacts.cfg', }
+  Nagios_command      { target => '/etc/nagios/conf.d/nagios_command.cfg', }
+  Nagios_host         { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
+  Nagios_hostgroup    { target => '/etc/nagios/conf.d/nagios_hostgroup.cfg', }
+  Nagios_service      { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
 
   $nagios_contacts = hiera_hash('nagios::contacts',undef)
   if $nagios_contacts { create_resources (nagios_contact, $nagios_contacts) }
