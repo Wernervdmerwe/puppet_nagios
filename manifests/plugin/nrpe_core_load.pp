@@ -1,6 +1,6 @@
 class nagios::plugin::nrpe_core_load (
-  $warn = 2,
-  $crit = 4
+  $warn = 3,
+  $crit = 5
 ){
 
 # NRPE Command
