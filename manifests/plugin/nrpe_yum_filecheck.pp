@@ -16,5 +16,6 @@ class nagios::plugin::nrpe_yum_filecheck {
   @@nagios_service { "check-yum_file_${::hostname}":
     check_command       => 'check_nrpe!check_yum_file',
     service_description => 'Yum Patching',
+    host_name           =>  $::fqdn,
   }
 }
