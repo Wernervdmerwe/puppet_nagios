@@ -22,7 +22,8 @@ class nagios::collect_checks {
     ensure              => 'present',
     use                 => 'generic-service',
     notification_period => '24x7',
-    target              => "/etc/nagios/conf.d/${::fqdn}.cfg"
+    target              => "/etc/nagios/conf.d/${::fqdn}.cfg",
+    require		=> Nagios_host[$::fqdn]
   }
 
   # Collect resources and populate /etc/nagios/nagios_*.cfg
