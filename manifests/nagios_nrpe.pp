@@ -5,6 +5,9 @@ class nagios::nagios_nrpe (
   include 'nrpe'
   include 'sudo'
 
+  # Allow nrpe to run with SELinux
+  selinux::boolean { 'nagios_run_sudo': }
+
   $plugin_packages.each |$plugin| {
     package { "nagios-plugins-${plugin}": }
   }
