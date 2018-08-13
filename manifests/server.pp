@@ -35,7 +35,7 @@ class nagios::server (
     mode    => '0664',
   }
 
-  file { [ '/etc/nagios/conf.d/nagios_command.cfg', '/etc/nagios/conf.d/nagios_contact.cfg', '/etc/nagios/conf.d/nagios_host.cfg', '/etc/nagios/conf.d/nagios_hostgroup.cfg', '/etc/nagios/conf.d/nagios_service.cfg', "/etc/nagios/conf.d/${::fqdn}.cfg" ]:
+  file { [ '/etc/nagios/conf.d/nagios_command.cfg', '/etc/nagios/conf.d/nagios_contact.cfg', '/etc/nagios/conf.d/nagios_host.cfg', '/etc/nagios/conf.d/nagios_hostgroup.cfg', '/etc/nagios/conf.d/nagios_service.cfg' ]:
     ensure => 'file',
     mode   => '0644',
     owner  => 'nagios',
@@ -52,6 +52,24 @@ class nagios::server (
     ensure    => 'running',
     subscribe => File['/etc/nagios/conf.d'],
     require   => Package[nagios],
+  }
+
+  @@nagios_host { $::fqdn:
+    ensure     => present,
+    alias      => $::hostname,
+    address    => $::ipaddress,
+    use        => 'linux-server',
+    hostgroups => $hostgroups,
+    target     => "/etc/nagios/conf.d/${::fqdn}.cfg",
+    notify     => Service['nagios'],
+  }
+
+  @@file { "/etc/nagios/conf.d/${::fqdn}.cfg":
+    ensure => 'file',
+    mode   => '0644',
+    owner  => 'nagios',
+    group  => 'nagios',
+    tag    => 'nagios_clients'
   }
 
   include nagios::collect_checks

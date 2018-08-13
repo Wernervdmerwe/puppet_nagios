@@ -29,7 +29,6 @@ class nagios::nagios_client (
     tag    => 'nagios_clients'
   }
 
-
   if $nagios_servers {
     $nagios_servers.each |String $nagios_server| {
       firewalld_rich_rule { "Allow NRPE port from nagios server ${nagios_server}":
