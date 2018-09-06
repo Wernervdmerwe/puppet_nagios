@@ -16,6 +16,13 @@ class nagios::plugin::nrpe_tcpcheck(
   $item_list = [{ url => 'google.com', port => '443', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
 ){
 
+# NRPE Command
+  nrpe::command { 'check_tcp-port_response':
+    ensure  => present,
+    command => 'check_tcp -H $ARG1$ -p $ARG2$ -w "$ARG3$" -c "$ARG3$"';
+  }
+
+
 # Nagios Check
   $item_list.each | $item | {
     @@nagios_service {"Check ${item[url]}:${item[port]} from ${::hostname}":
