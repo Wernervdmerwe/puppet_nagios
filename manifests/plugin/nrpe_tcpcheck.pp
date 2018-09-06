@@ -22,7 +22,6 @@ class nagios::plugin::nrpe_tcpcheck(
       check_command       => "check_nrpe!check_tcp  -H \"${item[url]}\" -p ${item[port]} -w ${item[warn_limit_ms]} -c ${item[crit_limit_ms]}",
       service_description => "Response from ${item[url]}:${item[port]}",
       target              => "/etc/nagios/conf.d/${::fqdn}.cfg",
-      host_name           => $::fqdn,
       use                 => 'generic-service',
     }
   }
