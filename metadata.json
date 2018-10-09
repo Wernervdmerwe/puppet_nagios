@@ -1,13 +1,27 @@
 {
-  "author": "Werner van der Merwe",
-  "dependencies": [],
-  "license": "Apache-2.0",
   "name": "wernervdmerwe-nagios",
-  "operatingsystem_support": [],
-  "project_page": "",
-  "requirements": [],
-  "source": "https://github.com/wernervdmerwe/puppet_nagios",
+  "version": "0.1.0",
+  "author": "Werner van der Merwe",
   "summary": "Manages Nagios",
-  "tags": [],
-  "version": "0.1.0"
+  "license": "Apache-2.0",
+  "source": "https://github.com/wernervdmerwe/puppet_nagios",
+  "project_page": "",
+  "dependencies": [
+
+  ],
+  "operatingsystem_support": [
+
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">=4.0.0"
+    }
+  ],
+  "tags": [
+
+  ],
+  "pdk-version": "1.7.0",
+  "template-url": "file:///opt/puppetlabs/pdk/share/cache/pdk-templates.git",
+  "template-ref": "1.7.0-0-g57412ed"
 }
