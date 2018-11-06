@@ -42,6 +42,13 @@ class nagios::server (
     group  => 'nagios',
   }
 
+  # Deploy nagios_commander
+  file {'/usr/local/bin/nagios_commander.sh':
+    ensure => 'file',
+    mode   => '0777',
+    source => 'puppet:///modules/nagios/nagios_commander.sh',
+  }
+
   nagios_command { 'Create NRPE Check':
     ensure       => 'present',
     command_name => 'check_nrpe',
