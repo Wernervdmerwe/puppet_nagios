@@ -1,11 +1,14 @@
 #!/bin/bash -
-# Title:    nagios_commander.sh
-# Author:   Brandon J. O'Connor <brandoconnor@gmail.com>
+# Title:    nagios_commander_task.sh
+# Author:   Original: Brandon J. O'Connor <brandoconnor@gmail.com>
+#           Modified: Jasper Connery
 # Created:  08.19.12
-# Purpose:  Provide a CLI to query and access common nagios functions remotely
-# TODO:     password input from a plain text file
+# Modified: 09.01.19
+# Purpose:  Provide a CLI to query and access common nagios functions remotely via puppet tasks
+# TODO:     password input from hiera or secrets server (may need to utilise a puppet PLAN)
 # TODO:     query service group or host group health
 # TODO:     feedback given when downtime del isn't found or when it successfully dels
+# TODO:     determine which functions are actually relevant and remove the remainder
 
 # Copyright 2012 Brandon J. O'Connor
 #
@@ -145,7 +148,7 @@ fi
 ## Probably want to keep this check
 # verify creds are good on the fastest page possible 
 NAGIOS_INSTANCE="$NAG_HTTP_SCHEMA://$NAG_HOST/cgi-bin"
-if [ -n "`curl -Ss $NAGIOS_INSTANCE/ -u $USERNAME:$PASSWORD | grep 'Authorization'`" ]; then
+if [ -n "$(curl -Ss $NAGIOS_INSTANCE/ -u $USERNAME:$PASSWORD | grep 'Authorization')" ]; then
     echo "Bad credentials. Exiting"; 
 	exit 1 
 fi
@@ -280,7 +283,7 @@ function MAIN {
 				CMD_TYP=79
 				COUNT=1; SCOPE=services
 				while [ ! $DOWN_ID ] && [ $COUNT -lt 5 ] ; do
-					FIND_DOWN_ID; COUNT=$[$COUNT+1]
+					FIND_DOWN_ID; COUNT=$(($COUNT+1))
 				done
 				if [ ! $DOWN_ID ]; then echo "Could not find downtime for $HOST. Exiting."
 					exit 1
@@ -290,7 +293,7 @@ function MAIN {
 				CMD_TYP=78
 				COUNT=1; SCOPE=hosts
 				while [ ! $DOWN_ID ] && [ $COUNT -lt 5 ] ; do
-					FIND_DOWN_ID; COUNT=$[$COUNT+1]
+					FIND_DOWN_ID; COUNT=$(($COUNT+1))
 				done
 				if [ ! $DOWN_ID ]; then echo "Could not find downtime for $HOST. Exiting."
 					exit 1
@@ -323,16 +326,25 @@ function SET_DOWNTIME {
 		--data "end_time=$NOW_ADD_MINS" \
 		--data fixed=1 \
 		--data hours=2 \
-		--data minu
+		--data minu \
 		--data btnSubmit=Commit \
 		--output /dev/null
-	if [ $? -eq 1 ]; then echo "curl failed. Command not sent."; exit 1; fi if [ -z $QUIET ]; then
-		if [ $SERVICE ]; then SCOPE=services; elif [ $HOST ]; then SCOPE=hosts; fi
+	if [ $? -eq 1 ]; then 
+        echo "curl failed. Command not sent."; 
+        exit 1; 
+    fi 
+    if [ -z $QUIET ]; then
+		if [ $SERVICE ]; then 
+            SCOPE=services; 
+        elif [ $HOST ]; then 
+            SCOPE=hosts; 
+        fi
+
 		if [ $HOST ] || [ $SERVICE ]; then
 			COUNT=2; FIND_DOWN_ID; OLD_DID=$DOWN_ID;
 			if [ $OLD_DID ]; then sleep 1; else OLD_DID=1 && DOWN_ID=1; fi
 			while [ $DOWN_ID -eq $OLD_DID  ] && [ $COUNT -le $NAG_POLL_TIMEOUT ] ; do
-				sleep 1; FIND_DOWN_ID; COUNT=$[$COUNT+1]
+				sleep 1; FIND_DOWN_ID; COUNT=$(($COUNT+1))
 			done
 			if [ $DOWN_ID -eq 1 ]; then
 				echo "Could not find newly created downtime. Exiting."; exit 1
@@ -349,13 +361,13 @@ function FIND_DOWN_ID {
 		--data type=6 | grep "extinfo.cgi" | sed -e'/service=/d' |\
 		awk -F"<td CLASS='downtime" '{print $2" "$4" "$7" "$10" "$5}' |\
 		awk -F'>' '{print $3"|||"$10}' | sed -e's/<\/td//g' -e's/<\/A//g' |\
-		egrep "$HOST" | egrep -o "[0-9]+" | sort -rn | head -n1)
+		grep -E "$HOST" | grep -E -o "[0-9]+" | sort -rn | head -n1)
 		if [ ! $DOWN_ID ]; then DOWN_ID=1; fi elif [[ $SCOPE = services ]]; then
 		DOWN_ID=$(curl -Ss $NAGIOS_INSTANCE/extinfo.cgi -u $USERNAME:$PASSWORD \
 		--data type=6 | grep "extinfo.cgi" | grep "service=" |\
 		awk -F"<td CLASS='downtime" '{print $2" "$3" "$5" "$7" "$8" "$6" "$11}' |\
 		awk -F'>' '{print $3"|||"$7"|||"$18}' | sed -e's/<\/td//g' -e's/<\/A//g' |\
-		column -c8 -t -s"|||" | egrep "$HOST" | grep "$SERVICE" | egrep -o "[0-9]+" |\
+		column -c8 -t -s"|||" | grep -E "$HOST" | grep "$SERVICE" | grep -E -o "[0-9]+" |\
 		sort -rn | head -n1)
 	if [ ! $DOWN_ID ]; then DOWN_ID=1; fi
 	if [ $? -eq 1 ]; then echo "curl failed"; exit 1; fi fi 
@@ -400,13 +412,19 @@ function GLOBAL_COMMAND {
 		--data btnSubmit=Commit \
 		-u $USERNAME:$PASSWORD |\
 		grep -o 'Your command request was successfully submitted to Nagios for processing.'
-	if [ $? -eq 1 ]; then echo "curl failed. Command not sent."; exit 1; fi 
+	if [ $? -eq 1 ]; then 
+        echo "curl failed. Command not sent.";
+        exit 1; 
+    fi 
+
 	QUERY=$SCOPE
-	RESULT=`MAIN` until [[ $SCOPE:$VALUE = $RESULT ]]
+	RESULT=$(MAIN) until [[ $SCOPE:$VALUE = $RESULT ]]
 	
-	do sleep 1
-		RESULT=`MAIN`; 
-	done 
+    ### What is this section here for???
+	#do sleep 1
+	#	RESULT=`MAIN`; 
+	#done 
+    
 	echo $RESULT 
 	exit 0 
 }
@@ -444,11 +462,11 @@ function RECHECK {
 	curl -sS  $DATA \
 		$NAGIOS_INSTANCE/cmd.cgi \
 		--data host=$HOST \
-		--data "time=$NOW" \    # best effort guess
+		--data time=$NOW \    # best effort guess
 		--data cmd_typ=7 \
 		--data cmd_mod=2 \  # is this necessary?
 		--data btnSubmit=Commit \
-		--data "force_recheck"
+		--data "force_recheck" \
 		-u $USERNAME:$PASSWORD |\
 		grep -o 'Your command request was successfully submitted to Nagios for processing.'
 	if [ $? -eq 1 ]; then 
@@ -487,17 +505,21 @@ function LIST_GROUPS {
 	echo "List of all $TYPE\groups"
 	echo "---"
 	curl -Ss $DATA $NAGIOS_INSTANCE/status.cgi -u $USERNAME:$PASSWORD |\
-		egrep "status(Even|Odd)" | grep "status.cgi?$TYPE\group=" | awk -F'</A>' '{print $1}' |\
+		grep -E "status(Even|Odd)" | grep "status.cgi?$TYPE\group=" | awk -F'</A>' '{print $1}' |\
 		awk -F"${TYPE}group=" '{print $2}' | awk -F'&' '{print $1}' | column -c2 -t 
 	exit 
 }
 
 function LIST_SERVICES {
-	echo Fetching services and health on $HOST echo --- HOSTS=($(curl -Ss $DATA $NAGIOS_INSTANCE/status.cgi -u $USERNAME:$PASSWORD |\
-		grep "extinfo.cgi?type=2&host=" | cut -d"=" -f8 | cut -d"'" -f1)) STATUSES=($(curl -Ss $DATA $NAGIOS_INSTANCE/status.cgi -u $USERNAME:$PASSWORD |\
-		egrep "status(OK|CRITICAL|WARNING|UNKNOWN)" | cut -d"'" -f2 | cut -c 7-)) for i in $(seq 0 $(( ${#HOSTS[@]} - 1 )) ); do
-		COMBINED=(${COMBINED[@]} ${HOSTS[$i]}@${STATUSES[$i]}) done echo ${COMBINED[@]} | tr ' ' '\n' |  sed '1 i \---' |  sed '1 i \Service@State' |\
-		tr '@' ' ' | column -c2 -t
+	echo Fetching services and health on $HOST 
+    echo --- 
+    HOSTS="$(curl -Ss $DATA $NAGIOS_INSTANCE/status.cgi -u $USERNAME:$PASSWORD |\
+		grep "extinfo.cgi?type=2&host=" | cut -d"=" -f8 | cut -d"'" -f1)" STATUSES="$(curl -Ss $DATA $NAGIOS_INSTANCE/status.cgi -u $USERNAME:$PASSWORD |\
+		egrep "status(OK|CRITICAL|WARNING|UNKNOWN)" | cut -d"'" -f2 | cut -c 7-)"
+    for i in $(seq 0 $(( ${#HOSTS[@]} - 1 )) ); do
+	    COMBINED="${COMBINED[*]} ${HOSTS[$i]}@${STATUSES[$i]}" 
+    done 
+    printf "${COMBINED[*]} | tr ' ' '\n' |  sed '1 i \---' |  sed '1 i \Service@State' | tr '@' ' ' | column -c2 -t"
 }
 
 MAIN
