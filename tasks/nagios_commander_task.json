@@ -1,0 +1,64 @@
+{
+    "description": "Manage Nagios via Puppet Task. Please be aware that this script can only use one of the options: 'list', 'query', or 'action' - these options cannot be used in conjunction with each other or the script will fail.",
+    "input_method": "environment",
+    "parameters": {
+      "nagios_server": {
+        "description": "Choose either the sharedtest or production nagios server",
+        "type": "Enum[sharedtest,production]"
+      },
+      "username": {
+        "description": "Nagios username",
+        "type": "String[1]",
+        "sensitive": true
+      },
+      "password": {
+        "description": "Nagios password",
+        "type": "String[1]",
+        "sensitive": true
+      },
+      "host": {
+        "description": "FQDN of specific host, if required",
+        "type": "Optional[String[1]]"
+      },
+      "hostgroup": {
+        "description": "FQDN of specific hostgroup, if required",
+        "type": "Optional[String[1]]"
+      },
+      "service": {
+        "description": "Name of specific service, if required",
+        "type": "Optional[String[1]]"
+      },
+      "servicegroup": {
+        "description": "Name of specific servicegroup, if required",
+        "type": "Optional[String[1]]"
+      },
+      "downtime_id": {
+        "description": "Specify the downtime id number to set or remove downtime",
+        "type": "Optional[Integer[1]]"
+      },
+      "state": {
+        "description": "Choose to set a command's state to enabled, or disabled",
+        "type": "Optional[Enum[enabled,disabled]]"
+      },
+      "time_in_minutes": {
+        "description": "The amount of time (in minutes) to set downtime for.",
+        "type": "Optional[Integer[1]]"
+      },
+      "comment": {
+        "description": "Add a comment providing a reason for your command",
+        "type": "Optional[String[1]]"
+      },
+      "action": {
+        "description": "Action a Nagios command. May require extra parameters to be selected. Cannot be used the same time as query or list",
+        "type": "Optional[Enum[set_downtime,remove_downtime,set_notifications,set_event_handlers,set_active_service_checks,set_passive_service_checks,set_active_host_checks,set_passive_host_checks]]"
+      },
+      "list": {
+        "description": "Action a Nagios command. May require extra parameters to be selected - if a 'specific' option is chosen, you must also specify the relevant optional parameter, e.g. specific_host requires the paramater 'host' to be supplied. Cannot be used the same time as action or query",
+        "type": "Optional[Enum[all_hosts,specific_host,all_hostgroups,specific_hostgroup,all_servicegroups,specific_servicegroup]]"
+      },
+      "query": {
+        "description": "Query Nagios settings, or hosts/services. May require extra parameters to be selected. Cannot be used the same time as an action or list",
+        "type": "Optional[Enum[event_handlers,notifications,active_svc_checks,passive_svc_checks,active_host_checks,passive_host_checks,host_downtime,service_downtime]]"
+    }
+  }
+}
