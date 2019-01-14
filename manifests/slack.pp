@@ -1,6 +1,8 @@
 class nagios::slack (
-  $opt_token,
-  $opt_domain
+  String $opt_token,
+  String $opt_domain,
+  String $slack_service_channel = $nagios::params::slack_service_channel,
+  String $slack_host_channel = $nagios::params::slack_host_channel,
 ){
   package {['perl-libwww-perl','perl-Crypt-SSLeay', 'perl-LWP-Protocol-https']:
     ensure => 'installed',
@@ -19,17 +21,17 @@ class nagios::slack (
   }
 
   file_line {'Set Slack Domain':
-    ensure => 'present',
-    line   => "my \$opt_domain = \"$opt_domain\";",
-    match  => '^my.+opt_domain\s+=',
-    path   => '/usr/local/bin/slack_nagios.pl',
+    ensure  => 'present',
+    line    => "my \$opt_domain = \"${opt_domain}\";",
+    match   => '^my.+opt_domain\s+=',
+    path    => '/usr/local/bin/slack_nagios.pl',
     require => Exec['Pull down nagios-slack executable']
   }
   file_line {'Set Slack Token':
-    ensure => 'present',
-    line   => "my \$opt_token = \"$opt_token\";",
-    match  => "^my.+opt_token\s+=",
-    path   => '/usr/local/bin/slack_nagios.pl',
+    ensure  => 'present',
+    line    => "my \$opt_token = \"${opt_token}\";",
+    match   => "^my.+opt_token\s+=",
+    path    => '/usr/local/bin/slack_nagios.pl',
     require => Exec['Pull down nagios-slack executable']
   }
 
@@ -49,12 +51,12 @@ class nagios::slack (
   nagios_command { 'notify-service-by-slack':
     ensure       => 'present',
     command_name => 'notify-service-by-slack',
-    command_line => '/usr/local/bin/slack_nagios.pl -field slack_channel=#alerts -field HOSTALIAS="$HOSTNAME$" -field SERVICEDESC="$SERVICEDESC$" -field SERVICESTATE="$SERVICESTATE$" -field SERVICEOUTPUT="$SERVICEOUTPUT$" -field NOTIFICATIONTYPE="$NOTIFICATIONTYPE$"',
+    command_line => "/usr/local/bin/slack_nagios.pl -field slack_channel=${slack_service_channel} -field HOSTALIAS=\"\$HOSTNAME\$\" -field SERVICEDESC=\"\$SERVICEDESC\$\" -field SERVICESTATE=\"\$SERVICESTATE\$\" -field SERVICEOUTPUT=\"\$SERVICEOUTPUT\$\" -field NOTIFICATIONTYPE=\"\$NOTIFICATIONTYPE\$\"",
   }
   nagios_command { 'notify-host-by-slack':
     ensure       => 'present',
     command_name => 'notify-host-by-slack',
-    command_line => '/usr/local/bin/slack_nagios.pl -field slack_channel=#ops -field HOSTALIAS="$HOSTNAME$" -field HOSTSTATE="$HOSTSTATE$" -field HOSTOUTPUT="$HOSTOUTPUT$" -field NOTIFICATIONTYPE="$NOTIFICATIONTYPE$"',
+    command_line => "/usr/local/bin/slack_nagios.pl -field slack_channel=${slack_host_channel} -field HOSTALIAS=\"\$HOSTNAME\$\" -field HOSTSTATE=\"\$HOSTSTATE\$\" -field HOSTOUTPUT=\"\$HOSTOUTPUT\$\" -field NOTIFICATIONTYPE=\"\$NOTIFICATIONTYPE\$\"",
   }
 
 }
