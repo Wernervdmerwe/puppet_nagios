@@ -1,5 +1,5 @@
 class nagios::collect_checks (
-  String $environments = [ $::environment ]
+  Array $environments = [ $::environment ]
 ){
   Nagios_contact {
     host_notification_period      => '24x7',
