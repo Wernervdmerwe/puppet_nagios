@@ -1,7 +1,6 @@
 class nagios::server (
   Boolean $graphios_install = $nagios::params::graphios_install,
   String $graphite_host     = $nagios::params::graphite_host,
-  String $nagios_master_env = lookup('nagios::master_environment'),
 ){
 
   resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]: purge => true, }
@@ -77,7 +76,7 @@ class nagios::server (
     mode   => '0644',
     owner  => 'nagios',
     group  => 'nagios',
-    tag    => ['nagios_clients', $nagios_master_env],
+    tag    => $::environment,
   }
 
   include nagios::collect_checks

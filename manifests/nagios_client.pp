@@ -1,5 +1,4 @@
 class nagios::nagios_client (
-  String $nagios_master_env = lookup('nagios::master_environment'),
   $nagios_servers           = $nagios::nagios_servers
 ){
   $nagios_hg = hiera(nagios_hostgroup,undef)
@@ -27,7 +26,7 @@ class nagios::nagios_client (
     mode   => '0644',
     owner  => 'nagios',
     group  => 'nagios',
-    tag    => ['nagios_clients', $nagios_master_env],
+    tag    => $::environment,
   }
 
   if $nagios_servers {

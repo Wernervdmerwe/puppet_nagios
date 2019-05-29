@@ -1,5 +1,5 @@
 class nagios::collect_checks (
-  String $nagios_master_env = lookup('nagios::master_environment'),
+  String $environments = [ $::environment ]
 ){
   Nagios_contact {
     host_notification_period      => '24x7',
@@ -29,8 +29,10 @@ class nagios::collect_checks (
   }
 
   # Collect resources and populate /etc/nagios/nagios_*.cfg
-  File <<| tag == ['nagios_clients', $nagios_master_env] |>> { notify => Service['nagios'] }
-  Nagios_host <<| tag == $nagios_master_env |>> { notify => Service['nagios'] }
-  Nagios_service <<| tag == $nagios_master_env |>> { notify => Service['nagios'] }
-  Nagios_hostextinfo <<| tag == $nagios_master_env |>> { notify => Service['nagios'] }
+  $environments.each | String $env | {
+    File <<| tag == $env |>> { notify => Service['nagios'] }
+    Nagios_host <<| tag == $env |>> { notify => Service['nagios'] }
+    Nagios_service <<| tag == $env |>> { notify => Service['nagios'] }
+    Nagios_hostextinfo <<| tag == $env |>> { notify => Service['nagios'] }
+  }
 }
