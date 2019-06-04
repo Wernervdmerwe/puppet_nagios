@@ -305,12 +305,12 @@ fi
 }
 
 function SET_DOWNTIME {
-NOW_ADD_MINS=$(date +"%Y-%m-%dT%H:%M:%S" -d "+$MINUTES minute")
+NOW_ADD_MINS=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S" -d "+$MINUTES minute")
 if [ ! $MINUTES ]; then
     echo "Time value not set. Cannot submit downtime requests without a duration."
     exit
 fi
-NOW=$(date +"%Y-%m-%dT%H:%M:%S")
+NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
 curl -sS $DATA $NAGIOS_INSTANCE/cmd.cgi -u "$USERNAME:$PASSWORD" \
     --data cmd_typ=$CMD_TYP \
     --data cmd_mod=2 \
@@ -346,14 +346,14 @@ if [[ $SCOPE = hosts ]]; then
     --data type=6 | grep "extinfo.cgi" | sed -e'/service=/d' |\
     awk -F"<td CLASS='downtime" '{print $2" "$4" "$7" "$10" "$5}' |\
     awk -F'>' '{print $3"|||"$10}' | sed -e's/<\/td//g' -e's/<\/A//g' |\
-    egrep "$HOST" | egrep -o "[0-9]+" | sort -rn | head -n1)
+    egrep "$HOST" | egrep -o "[0-9]+$" | sort -rn | head -n1)
     if [ ! $DOWN_ID ]; then DOWN_ID=1; fi
 elif [[ $SCOPE = services ]]; then
     DOWN_ID=$(curl -Ss $NAGIOS_INSTANCE/extinfo.cgi -u $USERNAME:$PASSWORD \
     --data type=6 | grep "extinfo.cgi" | grep "service=" |\
     awk -F"<td CLASS='downtime" '{print $2" "$3" "$5" "$7" "$8" "$6" "$11}' |\
     awk -F'>' '{print $3"|||"$7"|||"$18}' | sed -e's/<\/td//g' -e's/<\/A//g' |\
-    column -c8 -t -s"|||" | egrep "$HOST" | grep "$SERVICE" | egrep -o "[0-9]+" |\
+    column -c8 -t -s"|||" | egrep "$HOST" | grep "$SERVICE" | egrep -o "[0-9]+$" |\
     sort -rn | head -n1)
 if [ ! $DOWN_ID ]; then DOWN_ID=1; fi
 if [ $? -eq 1 ]; then echo "curl failed"; exit 1; fi
@@ -431,7 +431,7 @@ t
 }
 
 function RECHECK {
-NOW=$(date +"%Y-%m-%dT%H:%M:%S")
+NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
 curl -sS  $DATA \
     $NAGIOS_INSTANCE/cmd.cgi \
     --data host=$HOST \
