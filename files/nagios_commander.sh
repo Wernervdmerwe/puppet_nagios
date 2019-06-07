@@ -25,17 +25,29 @@
 ## Example;  nagios_commander.sh -n pro-mon9003/nagios -q list -h -u nagiosadmin
 
 unalias -a
+
 # globals can be defined here if desired
 #NAG_HOST=''
 #USERNAME=''
 #PASSWORD=''
 NAG_HTTP_SCHEMA='http'
+
 # seconds to poll nagios till downtime is set
 NAG_POLL_TIMEOUT=45
-USERNAME='<USERNAME>'
 
+# path to configuration file
+RCFILE=~/.nagios_commander.rc
+
+if [[ -r $RCFILE ]] ; then
+     . "$RCFILE"
+fi
+
+# print command usage
 function usage {
 if [ -z $NAG_HOST ]; then $NAG_HOST='nagios.env/nagios'; fi
+
+if [ -z $USERNAME ]; then $USERNAME='<USERNAME>'; fi
+
 PROGNAME=$(basename $0)
 DIR="$(cd "$( dirname "$0")" && pwd)"
 echo "
@@ -417,17 +429,35 @@ else echo  "$QUERY:disabled"; exit 0; fi
 }
 
 function ACKNOWLEDGE {
-curl -sS  $DATA \
+# Notifications are enabled
+
+# Set a comment if none has been supplied
+  if [ -z "$COMMENT" ]; then
+    COMMENT="Acknowledging service $SERVICE on $HOST."
+  fi
+
+  # $DATA is set when ACKNOWLEDGE() is called, e.g.:
+  #   DATA="--data cmd_typ=34 --data service=$SERVICE"; ACKNOWLEDGE
+
+
+  RESPONSE=`curl -sS \
     $NAGIOS_INSTANCE/cmd.cgi \
+    -u $USERNAME:$PASSWORD \
+    $DATA \
+    --data cmd_mod=2 \
     --data host=$HOST \
     --data "com_data=$COMMENT" \
-    --data cmd_mod=2 \
-    --data btnSubmit=Commit \
-    -u $USERNAME:$PASSWORD |\
-    grep -o 'Your command request was successfully submitted to Nagios for processing.'
-if [ $? -eq 1 ]; then echo "curl failed. Command not sent."; exit 1; fi
-exi
-t
+    --data sticky_ack=on \
+    --data send_notification=on \
+    --data btnSubmit=Commit`
+
+  # Check if command was successful
+  echo "$RESPONSE" | grep -o 'Your command request was successfully submitted to Nagios for processing.' && exit 0
+
+  # Get error message if not (t & d in sed below transfers to end of output and deletes lines)
+  echo "$RESPONSE" | sed -e "/errorMessage/ s/<P><DIV CLASS='errorMessage'>\([^>]\+\)<\/DIV><\/P>/\1/;t;d"
+  echo "curl failed. Command not sent."
+  exit 1
 }
 
 function RECHECK {
