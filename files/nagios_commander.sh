@@ -303,6 +303,8 @@ elif [ $ACTION ]; then
                 exit 1
             fi
             DELETE_DOWNTIME; exit
+        elif [ $HOSTGROUP ]; then
+            DELETE_DOWNTIME_HOSTGROUP
         else
             echo "No host, service or downtime-id specified. Listing current downtimes now."
             SCOPE=hosts; DOWNTIME_QUERY; SCOPE=services; DOWNTIME_QUERY
@@ -401,6 +403,32 @@ curl -Ss --output /dev/null $NAGIOS_INSTANCE/cmd.cgi \
     --data btnSubmit=Commit \
     -u $USERNAME:$PASSWORD
 if [ $? -eq 1 ]; then echo "curl failed"; exit 1; fi
+}
+
+function DELETE_DOWNTIME_HOSTGROUP {
+  # Delete host downtimes for hostgroup
+
+  # Counter to track downtimes
+  COUNT=0
+
+  # Set command to CMD_DEL_HOST_DOWNTIME
+  CMD_TYP=78
+
+  # Find all hosts in hostgroup
+  HOSTLIST=`curl -Ss -u $USERNAME:$PASSWORD "$NAGIOS_INSTANCE/statusjson.cgi?query=hostlist&details=true&hostgroup=$HOSTGROUP" | jq -r '.data.hostlist[].name'`
+
+  for HOST in $HOSTLIST; do
+    # Find all downtime IDs for host
+    DOWNTIME_IDS=`curl -Ss -u $USERNAME:$PASSWORD "$NAGIOS_INSTANCE/statusjson.cgi?query=downtimelist&details=true&hostname=$HOST" | jq -r '.data.downtimelist[].downtime_id'`
+    
+    for DOWN_ID in $DOWNTIME_IDS; do
+        echo "Deleting downtime $DOWN_ID for host $HOST."
+        DELETE_DOWNTIME
+        ((COUNT++))
+    done
+  done
+
+  echo "Deleted $COUNT downtimes for hostgroup $HOSTGROUP."
 }
 
 function GLOBAL_COMMAND {
