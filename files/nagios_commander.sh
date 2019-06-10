@@ -124,7 +124,7 @@ while [ "$1" != "" ]; do
             -S | --service_group ) if [[ $2 = [A-Za-z]* ]]; then shift; SERVICEGROUP=$1; else SERVICEGROUP=list; fi;;
             -t | --time ) shift; MINUTES=$1;;
             -q | --query ) shift; QUERY=$1;;
-            -c | --command ) shift; ACTION=$1; if [[ ! $ACTION =~ ack ]];then shift; SCOPE=$1; if [[ $2 = [a-z]* ]]; then shift; VALUE=$1; fi; fi;;
+            -c | --command ) shift; ACTION=$1; if [[ ! $ACTION =~ ack|recheck ]];then shift; SCOPE=$1; if [[ $2 = [a-z]* ]]; then shift; VALUE=$1; fi; fi;;
             -C | --comment ) shift; COMMENT=$1;;
             -u | --username ) shift; USERNAME=$1;;
             -p | --password ) shift; PASSWORD=$1;;
@@ -254,7 +254,7 @@ elif [ $ACTION ]; then
                 SEARCH='Passive Host Checks'; GLOBAL_QUERY
             fi
         fi
-    elif [[ $ACTION = set ]] || [[ $ACTION = ack ]] ; then
+    elif [[ $ACTION = set ]] || [[ $ACTION = ack ]] || [[ $ACTION = recheck ]] ; then
         if [[ $SCOPE = downtime ]]; then
             if [ $HOST ] && [ ! $SERVICE ]; then
                 CMD_TYP='55'; DATA="--data host=$HOST --data trigger=0"
@@ -277,7 +277,7 @@ elif [ $ACTION ]; then
         elif [[ $ACTION = recheck ]] && [ $HOST ] && [ $SERVICE ] ; then
             DATA="--data cmd_typ=7 --data service=$SERVICE"; RECHECK
          elif [[ $ACTION = recheck ]] && [ $HOST ] ; then
-            DATA="--data cmd_typ=6"; RECHECK
+            DATA="--data cmd_typ=96"; RECHECK
         fi
     elif [[ $ACTION = del ]]; then
         if [ $DOWN_ID ]; then
@@ -319,39 +319,47 @@ fi
 }
 
 function SET_DOWNTIME {
-NOW_ADD_MINS=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S" -d "+$MINUTES minute")
-if [ ! $MINUTES ]; then
-    echo "Time value not set. Cannot submit downtime requests without a duration."
-    exit
-fi
-NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
-curl -sS $DATA $NAGIOS_INSTANCE/cmd.cgi -u "$USERNAME:$PASSWORD" \
-    --data cmd_typ=$CMD_TYP \
-    --data cmd_mod=2 \
-    --data "com_data=$COMMENT" \
-    --data "start_time=$NOW" \
-    --data "end_time=$NOW_ADD_MINS" \
-    --data fixed=1 \
-    --data hours=2 \
-    --data minutes=0 \
-    --data btnSubmit=Commit \
-    --output /dev/null
-if [ $? -eq 1 ]; then echo "curl failed. Command not sent."; exit 1; fi
-if [ -z $QUIET ]; then
-    if [ $SERVICE ]; then SCOPE=services; elif [ $HOST ]; then SCOPE=hosts; fi
-    if [ $HOST ] || [ $SERVICE ]; then
-        COUNT=2; FIND_DOWN_ID; OLD_DID=$DOWN_ID;
-        if [ $OLD_DID ]; then sleep 1; else OLD_DID=1 && DOWN_ID=1; fi
-        while [ $DOWN_ID -eq $OLD_DID  ] && [ $COUNT -le $NAG_POLL_TIMEOUT ] ; do
-            sleep 1; FIND_DOWN_ID; COUNT=$[$COUNT+1]
-        done
-        if [ $DOWN_ID -eq 1 ]; then
-            echo "Could not find newly created downtime. Exiting."; exit 1
-        fi
+    # Ensure the comment and minutes arguments have been set
+    if [ -z "$COMMENT" ]; then
+        echo "Comment required. Specify with the -C option."
     fi
-    echo $DOWN_ID
-fi
-exit
+
+    if [ ! $MINUTES ]; then
+        echo "Time value not set. Cannot submit downtime requests without a duration."
+        exit
+    fi
+
+    NOW_ADD_MINS=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S" -d "+$MINUTES minute")
+    NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
+
+    RESPONSE=`curl -sS $DATA $NAGIOS_INSTANCE/cmd.cgi -u "$USERNAME:$PASSWORD" \
+        --data cmd_typ=$CMD_TYP \
+        --data cmd_mod=2 \
+        --data "com_data=$COMMENT" \
+        --data "start_time=$NOW" \
+        --data "end_time=$NOW_ADD_MINS" \
+        --data fixed=1 \
+        --data hours=2 \
+        --data minutes=0 \
+        --data btnSubmit=Commit`
+
+    CHECK_RESPONSE
+    
+    if [ -z $QUIET ]; then
+        if [ $SERVICE ]; then SCOPE=services; elif [ $HOST ]; then SCOPE=hosts; fi
+        if [ $HOST ] || [ $SERVICE ]; then
+            COUNT=2; FIND_DOWN_ID; OLD_DID=$DOWN_ID;
+            if [ $OLD_DID ]; then sleep 1; else OLD_DID=1 && DOWN_ID=1; fi
+            while [ $DOWN_ID -eq $OLD_DID  ] && [ $COUNT -le $NAG_POLL_TIMEOUT ] ; do
+                sleep 1; FIND_DOWN_ID; COUNT=$[$COUNT+1]
+            done
+            if [ $DOWN_ID -eq 1 ]; then
+                echo "Could not find newly created downtime. Exiting."; exit 1
+            fi
+        fi
+        echo $DOWN_ID
+    fi
+    exit
 }
 
 function FIND_DOWN_ID {
@@ -456,10 +464,22 @@ if [ -n "$MATCH" ]; then echo "$QUERY:enabled"; exit
 else echo  "$QUERY:disabled"; exit 0; fi
 }
 
-function ACKNOWLEDGE {
-# Notifications are enabled
+function CHECK_RESPONSE {
+  # Check if command was successful
+  echo "$RESPONSE" | grep -o 'Your command request was successfully submitted to Nagios for processing.'
 
-# Set a comment if none has been supplied
+  if [ $? -eq 1 ]; then
+    # Get error message if not (t & d in sed below transfers to end of output and deletes lines)
+    echo "$RESPONSE" | sed -e "/errorMessage/ s/<P><DIV CLASS='errorMessage'>\([^>]\+\)<\/DIV><\/P>/\1/;t;d"
+    echo "curl failed. Command not sent."
+    exit 1
+  fi
+}
+
+function ACKNOWLEDGE {
+  # Notification emails are enabled by default. Change send_notifications to 'off' below to disable.
+
+  # Set a comment if none has been supplied
   if [ -z "$COMMENT" ]; then
     COMMENT="Acknowledging service $SERVICE on $HOST."
   fi
@@ -479,26 +499,19 @@ function ACKNOWLEDGE {
     --data send_notification=on \
     --data btnSubmit=Commit`
 
-  # Check if command was successful
-  echo "$RESPONSE" | grep -o 'Your command request was successfully submitted to Nagios for processing.' && exit 0
-
-  # Get error message if not (t & d in sed below transfers to end of output and deletes lines)
-  echo "$RESPONSE" | sed -e "/errorMessage/ s/<P><DIV CLASS='errorMessage'>\([^>]\+\)<\/DIV><\/P>/\1/;t;d"
-  echo "curl failed. Command not sent."
-  exit 1
+  CHECK_RESPONSE
 }
 
 function RECHECK {
 NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
-curl -sS  $DATA \
-    $NAGIOS_INSTANCE/cmd.cgi \
+curl -sS $NAGIOS_INSTANCE/cmd.cgi \
+    -u $USERNAME:$PASSWORD \
+    $DATA \
+    --data cmd_mod=2 \
     --data host=$HOST \
-    --data "time=$NOW" \    # best effort guess
-    --data cmd_typ=7 \
-    --data cmd_mod=2 \  # is this necessary?
-    --data btnSubmit=Commit \
-    --data "force_recheck"
-    -u $USERNAME:$PASSWORD |\
+    --data start_time=$NOW \
+    --data force_check=on \
+    --data btnSubmit=Commit |\
     grep -o 'Your command request was successfully submitted to Nagios for processing.'
 if [ $? -eq 1 ]; then echo "curl failed. Command not sent."; exit 1; fi
 exit 0
