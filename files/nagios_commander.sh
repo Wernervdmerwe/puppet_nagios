@@ -139,9 +139,11 @@ if [ -n "$DEBUG" ]; then
     echo "DEBUG INFO: NAG_HOST=$NAG_HOST, SCOPE=$SCOPE, ACTION=$ACTION, VALUE=$VALUE, HOST=$HOST, HOSTGROUP=$HOSTGROUP, SERVICE=$SERVICE, SERVICEGROUP=$SERVICEGROUP, TIME=$MINUTES, QUERY=$QUERY, COMMENT=$COMMENT, TIME=$TIME, QUIET=$QUIET"
 fi
 
+# Prompt for credentials (if not found already)
 if [ -z $USERNAME ]; then read -p "Username: " USERNAME; fi
 if [ -z $PASSWORD ]; then read -s -p "Password for $USERNAME: " PASSWORD; echo ""; fi
 
+# Check parameters have been set
 if  [ $NAG_HOST ] && [ $USERNAME ] && [ $PASSWORD ] ; then
     if  [ ! $ACTION  ] && [ ! $QUERY ]; then
             echo "A query or command must be specified."; sleep 1; usage
@@ -152,10 +154,18 @@ else
     echo "Script initiated with insufficient inputs. Exiting."; sleep 1; usage
 fi
 
-# verify creds are good on the fastest page possible
+# Set nagios base URL
 NAGIOS_INSTANCE="$NAG_HTTP_SCHEMA://$NAG_HOST/cgi-bin"
-if [ -n "`curl -Ss $NAGIOS_INSTANCE/ -u $USERNAME:$PASSWORD | grep 'Authorization'`" ]; then
-    echo "Bad credentials. Exiting"; exit 1
+
+# Check connectivity
+RESPONSE=`curl -Ss $NAGIOS_INSTANCE/extinfo.cgi -u $USERNAME:$PASSWORD`
+
+if [[ $RESPONSE =~ 401\ Unauthorized ]]; then
+    echo "Bad credentials. Exiting"
+    exit 1
+elif [[ $RESPONSE =~ Error:\ Could\ not\ read\ host\ and\ service\ status ]]; then
+    echo "Cannot read host and service status. Check if the Nagios server is running."
+    exit 2
 fi
 
 function MAIN {
