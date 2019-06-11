@@ -33,21 +33,23 @@ NAG_POLL_TIMEOUT=15
 USERNAME=$PT_username
 PASSWORD=$PT_password
 
-## PUPPET VARIABLES FOR JSON FILE
 # Required options:
-# 			-- $PT_NAG_HOST - determines which nagios host to run against
-#			-- $PT_USERNAME
-#			-- $PT_PASSWORD
+#   -- $PT_nagios_server - determines which nagios host to run against
+#   -- $PT_username
+#   -- $PT_password
 #
 # Other options:
-# 			-- $PT_HOSTGROUP
-#			-- $PT_HOST
-#			-- $PT_QUERY
-#			-- $PT_COMMAND
-#			-- $PT_SERVICENAME
-#			-- $PT_SERVICEGROUP
-#			-- $PT_DOWN_ID
-#			-- $PT_DOWN_TIME
+#	-- $PT_hostgroup
+#	-- $PT_host
+#	-- $PT_state
+#	-- $PT_action
+#	-- $PT_service
+#	-- $PT_servicegroup
+#	-- $PT_downtime_id
+#	-- $PT_time_in_minutes
+#   -- $PT_list
+#   -- $PT_comment
+#   -- $PT_debug
 
 ## Puppet variable conversions
 # Determine which nagios host to use:
@@ -104,6 +106,11 @@ if [ "$PT_list" ]; then
 	PT_query="list_$PT_list"
 fi
 
+# Print debug info
+if [ "$PT_debug" ]; then
+	DEBUG=1
+fi
+
 # Sets the QUERY variable, among others
 if [[ "$PT_query" == list* ]]; then
 	# handles the QUERY requests
@@ -148,6 +155,11 @@ fi
 
 # Set nagios base URL
 NAGIOS_INSTANCE="$NAG_HTTP_SCHEMA://$NAG_HOST/cgi-bin"
+
+# Turn on debug output
+if [ -n "$DEBUG" ]; then
+    set -x
+fi
 
 # Check connectivity
 RESPONSE=`curl -Ss $NAGIOS_INSTANCE/extinfo.cgi -u $USERNAME:$PASSWORD`
