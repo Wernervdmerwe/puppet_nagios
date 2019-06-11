@@ -26,7 +26,8 @@ unalias -a
 NAG_HTTP_SCHEMA='http'
 
 # seconds to poll nagios till downtime is set
-NAG_POLL_TIMEOUT=45
+NAG_POLL_TIMEOUT=15
+. ~/.nagios_commander.rc
 
 # set credentials
 USERNAME=$PT_username
@@ -136,7 +137,7 @@ fi
 
 # Set $DEBUG to check variables
 if [ -n "$DEBUG" ]; then
-    echo "DEBUG INFO: NAG_HOST=$NAG_HOST, SCOPE=$SCOPE, ACTION=$ACTION, VALUE=$VALUE, HOST=$HOST, HOSTGROUP=$HOSTGROUP, SERVICE=$SERVICE, SERVICEGROUP=$SERVICEGROUP, TIME=$MINUTES, QUERY=$QUERY, COMMENT=$COMMENT, TIME=$TIME, QUIET=$QUIET"
+    echo "DEBUG INFO: NAG_HOST=$NAG_HOST, SCOPE=$SCOPE, ACTION=$ACTION, VALUE=$VALUE, HOST=$HOST, HOSTGROUP=$HOSTGROUP, SERVICE=$SERVICE, SERVICEGROUP=$SERVICEGROUP, TIME=$MINUTES, QUERY=$QUERY, COMMENT=$COMMENT, QUIET=$QUIET"
 fi
 
 # Check to ensure both $ACTION and $QUERY are not set
@@ -324,17 +325,21 @@ function SET_DOWNTIME {
     # Ensure the comment and minutes arguments have been set
     if [ -z "$COMMENT" ]; then
         echo "Comment required. Specify with the -C option."
+        exit 1
     fi
 
-    if [ ! $MINUTES ]; then
+    if [ -z "$MINUTES" ]; then
         echo "Time value not set. Cannot submit downtime requests without a duration."
-        exit
+        exit 1
     fi
 
-    NOW_ADD_MINS=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S" -d "+$MINUTES minute")
     NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
+    NOW_ADD_MINS=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S" -d "+$MINUTES minute")
 
-    RESPONSE=`curl -sS $DATA $NAGIOS_INSTANCE/cmd.cgi -u "$USERNAME:$PASSWORD" \
+    echo "Setting downtime for hostgroup $HOSTGROUP host $HOST service $SERVICE for 20 mins with comment $COMMENT"
+
+    RESPONSE=`curl -sS $NAGIOS_INSTANCE/cmd.cgi -u "$USERNAME:$PASSWORD" \
+        $DATA \
         --data cmd_typ=$CMD_TYP \
         --data cmd_mod=2 \
         --data "com_data=$COMMENT" \
@@ -349,22 +354,39 @@ function SET_DOWNTIME {
     
     if [ -z $QUIET ]; then
         if [ $SERVICE ]; then
-            SCOPE=services;
+            SCOPE=services
         elif [ $HOST ]; then
-            SCOPE=hosts;
+            SCOPE=hosts
+        elif [ $HOSTGROUP ]; then
+            SCOPE=hostgroups
         fi
-        if [ $HOST ] || [ $SERVICE ]; then
-            COUNT=2; FIND_DOWN_ID; OLD_DID=$DOWN_ID;
-            if [ $OLD_DID ]; then sleep 1; else OLD_DID=1 && DOWN_ID=1; fi
+
+        if [ $HOST ] || [ $SERVICE ] || [ $HOSTGROUP ]; then
+            COUNT=2;
+            FIND_DOWN_ID
+            OLD_DID=$DOWN_ID
+
+            if [ $OLD_DID ]; then
+                sleep 1
+            else
+                OLD_DID=1 && DOWN_ID=1
+            fi
+
             while [ $DOWN_ID -eq $OLD_DID  ] && [ $COUNT -le $NAG_POLL_TIMEOUT ] ; do
-                sleep 1; FIND_DOWN_ID; COUNT=$[$COUNT+1]
+                sleep 1
+                FIND_DOWN_ID
+                COUNT=$[$COUNT+1]
             done
+
             if [ $DOWN_ID -eq 1 ]; then
-                echo "Could not find newly created downtime. Exiting."; exit 1
+                echo "Could not find newly created downtime. Exiting."
+                exit 1
             fi
         fi
+
         echo $DOWN_ID
     fi
+
     exit
 }
 
@@ -375,7 +397,10 @@ function FIND_DOWN_ID {
         awk -F"<td CLASS='downtime" '{print $2" "$4" "$7" "$10" "$5}' |\
         awk -F'>' '{print $3"|||"$10}' | sed -e's/<\/td//g' -e's/<\/A//g' |\
         egrep "$HOST" | egrep -o "[0-9]+$" | sort -rn | head -n1)
-        if [ ! $DOWN_ID ]; then DOWN_ID=1; fi
+
+        if [ ! $DOWN_ID ]; then
+            DOWN_ID=1
+        fi
     elif [[ $SCOPE = services ]]; then
         DOWN_ID=$(curl -Ss $NAGIOS_INSTANCE/extinfo.cgi -u $USERNAME:$PASSWORD \
         --data type=6 | grep "extinfo.cgi" | grep "service=" |\
@@ -383,8 +408,17 @@ function FIND_DOWN_ID {
         awk -F'>' '{print $3"|||"$7"|||"$18}' | sed -e's/<\/td//g' -e's/<\/A//g' |\
         column -c8 -t -s"|||" | egrep "$HOST" | grep "$SERVICE" | egrep -o "[0-9]+$" |\
         sort -rn | head -n1)
-    if [ ! $DOWN_ID ]; then DOWN_ID=1; fi
-    if [ $? -eq 1 ]; then echo "curl failed"; exit 1; fi
+
+        if [ ! $DOWN_ID ]; then
+            DOWN_ID=1
+        fi
+    elif [[ $SCOPE = hostgroups ]]; then
+        DOWN_ID=`curl -sS "$NAGIOS_INSTANCE/statusjson.cgi?query=downtimelist" -u $USERNAME:$PASSWORD |\
+            jq -Sr '.data.downtimelist | max'`
+        
+        if [[ "$DOWN_ID" = "null" ]]; then
+            DOWN_ID=1
+        fi
     fi
 }
 
