@@ -59,6 +59,10 @@
       "query": {
         "description": "Query Nagios settings, or hosts/services. May require extra parameters to be selected. Cannot be used the same time as an action or list",
         "type": "Optional[Enum[event_handlers,notifications,active_svc_checks,passive_svc_checks,active_host_checks,passive_host_checks,host_downtime,service_downtime]]"
-    }
+      },
+      "debug": {
+        "description": "Print debug info to stdout.",
+        "type": "Optional[Boolean]"
+      }
   }
 }
