@@ -27,7 +27,16 @@ NAG_HTTP_SCHEMA='http'
 
 # seconds to poll nagios till downtime is set
 NAG_POLL_TIMEOUT=15
-. ~/.nagios_commander.rc
+
+# Load configuration file for command line testing
+RCFILE=~/.nagios_commander.rc
+
+if [[ -r $RCFILE ]] ; then
+     . "$RCFILE"
+fi
+
+# Check for jq (dependency)
+command -v jq >/dev/null 2>&1 || { echo "Command jq is missing. Exiting."; exit 1; }
 
 # set credentials
 USERNAME=$PT_username
