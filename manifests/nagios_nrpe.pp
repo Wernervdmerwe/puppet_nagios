@@ -7,6 +7,10 @@ class nagios::nagios_nrpe (
 
   # Allow nrpe to run with SELinux
   selinux::boolean { 'nagios_run_sudo': }
+  selinux::module { 'allow_nrpe_sudo':
+  ensure    => 'present',
+  source_pp => 'puppet:///modules/nagios/allow_nrpe_sudo.pp',
+}
 
   $plugin_packages.each |$plugin| {
     package { "nagios-plugins-${plugin}": }
