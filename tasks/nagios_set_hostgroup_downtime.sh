@@ -60,7 +60,7 @@ else
 fi
 
 # Print debug info
-if [[ "$PT_debug" = "true" ]; then
+if [[ "$PT_debug" = "true" ]]; then
 	DEBUG=1
 fi
 
@@ -103,11 +103,14 @@ function check_response {
     elif [[ $RESPONSE =~ Error:\ Could\ not\ read\ host\ and\ service\ status ]]; then
         echo "Cannot read host and service status. Check if the Nagios server is running. Exiting"
         exit 2
-    elif [[ $RESPONSE =~ errorMessage ]]
+    elif [[ $RESPONSE =~ Error:\ Could\ not\ stat\(\)\ command\ file ]]; then
+        echo "Could not read program status information. Check if the Nagios server is running. Exiting"
+        exit 3
+    elif [[ $RESPONSE =~ errorMessage ]]; then
         # Get error message if not (t & d in sed below transfers to end of output and deletes lines)
         echo "$RESPONSE" | sed -e "/errorMessage/ s/<P><DIV CLASS='errorMessage'>\([^>]\+\)<\/DIV><\/P>/\1/;t;d"
         echo "Command failed. Exiting"
-        exit 3
+        exit 4
     fi
 }
 
@@ -115,7 +118,7 @@ function check_response {
 NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
 NOW_ADD_MINS=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S" -d "+$MINUTES minute")
 
-echo "Setting downtime for hostgroup $HOSTGROUP for $MINUTES mins with comment $COMMENT..."
+echo "Setting downtime for hostgroup $HOSTGROUP for $MINUTES mins with comment '$COMMENT...'"
 
 # Find the most recent existing downtime ID and save in $OLD_DID
 find_max_downtime_id
@@ -125,10 +128,10 @@ OLD_DID=$DOWN_ID
 RESPONSE=`curl -sS $NAGIOS_INSTANCE/cmd.cgi -u "$USERNAME:$PASSWORD" \
 --data cmd_typ=84 \
 --data cmd_mod=2 \
---data hostgroup=$HOSTGROUP" \
+--data hostgroup="$HOSTGROUP" \
 --data "com_data=$COMMENT" \
---data "start_time=$NOW" \
---data "end_time=$NOW_ADD_MINS" \
+--data start_time=$NOW \
+--data end_time=$NOW_ADD_MINS \
 --data fixed=1 \
 --data hours=2 \
 --data minutes=0 \
