@@ -1,5 +1,5 @@
 {
-    "description": "Set downtime for hostgroup. Duration defaults to 1 hour. Hostgroup defaults to 'Linux'.",
+    "description": "Set downtime for hostgroup. Duration defaults to 1 hour. Hostgroup defaults to 'Linux'. Requires jq package on target node.",
     "input_method": "environment",
     "parameters": {
       "nagios_server": {

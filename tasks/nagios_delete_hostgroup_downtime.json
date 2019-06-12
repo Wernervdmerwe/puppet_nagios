@@ -1,5 +1,5 @@
 {
-    "description": "Remove downtime for a hostgroup. Hostgroup defaults to 'Linux'.",
+    "description": "Remove downtime for a hostgroup. Hostgroup defaults to 'Linux'. Requires jq package on target node.",
     "input_method": "environment",
     "parameters": {
       "nagios_server": {

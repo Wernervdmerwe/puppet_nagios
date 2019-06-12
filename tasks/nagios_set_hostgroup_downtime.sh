@@ -1,22 +1,5 @@
-#!/bin/bash -
-# Set downtime for Nagios hostgroup
-
-# seconds to poll nagios till downtime is set
-NAG_POLL_TIMEOUT=15
-
-# Load configuration file for command line testing
-RCFILE=~/.nagios_commander.rc
-
-if [[ -r $RCFILE ]] ; then
-     . "$RCFILE"
-fi
-
-# Check for jq (dependency for processing JSON output from Nagios)
-command -v jq >/dev/null 2>&1 || { echo "Command jq is missing. Exiting."; exit 1; }
-
-# set credentials
-USERNAME=$PT_username
-PASSWORD=$PT_password
+#!/bin/bash
+# Puppet task to set downtime for Nagios hostgroup
 
 # Required options:
 #   -- $PT_nagios_server - determines which nagios host to run against
@@ -29,7 +12,22 @@ PASSWORD=$PT_password
 #   -- $PT_comment
 #   -- $PT_debug
 
-## Puppet variable conversions
+# Seconds to poll nagios till downtime is set
+NAG_POLL_TIMEOUT=15
+
+# Load PT_* variables from a configuration file for command line testing
+RCFILE=~/.nagios_commander.rc
+
+if [[ -r $RCFILE ]] ; then
+     . "$RCFILE"
+fi
+
+# Check for jq (dependency for processing JSON output from Nagios)
+command -v jq >/dev/null 2>&1 || { echo "Command jq is missing. Exiting."; exit 1; }
+
+# Set credentials
+USERNAME=$PT_username
+PASSWORD=$PT_password
 
 # Set nagios base URL
 if [ $PT_nagios_server == 'sharedtest' ]; then
@@ -118,7 +116,7 @@ function check_response {
 NOW=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S")
 NOW_ADD_MINS=$(date +"%m-%d-%Y+%H%%3A%M%%3A%S" -d "+$MINUTES minute")
 
-echo "Setting downtime for hostgroup $HOSTGROUP for $MINUTES mins with comment '$COMMENT...'"
+echo "Setting downtime for hostgroup $HOSTGROUP for $MINUTES mins with comment '$COMMENT'..."
 
 # Find the most recent existing downtime ID and save in $OLD_DID
 find_max_downtime_id
@@ -126,16 +124,16 @@ OLD_DID=$DOWN_ID
 
 # Issue downtime command
 RESPONSE=`curl -sS $NAGIOS_INSTANCE/cmd.cgi -u "$USERNAME:$PASSWORD" \
---data cmd_typ=84 \
---data cmd_mod=2 \
---data hostgroup="$HOSTGROUP" \
---data "com_data=$COMMENT" \
---data start_time=$NOW \
---data end_time=$NOW_ADD_MINS \
---data fixed=1 \
---data hours=2 \
---data minutes=0 \
---data btnSubmit=Commit`
+    --data cmd_typ=84 \
+    --data cmd_mod=2 \
+    --data hostgroup="$HOSTGROUP" \
+    --data "com_data=$COMMENT" \
+    --data start_time=$NOW \
+    --data end_time=$NOW_ADD_MINS \
+    --data fixed=1 \
+    --data hours=2 \
+    --data minutes=0 \
+    --data btnSubmit=Commit`
 
 check_response
 

@@ -1,22 +1,5 @@
-#!/bin/bash -
-# Remove downtime for Nagios hostgroup
-
-# seconds to poll nagios till downtime is set
-NAG_POLL_TIMEOUT=15
-
-# Load configuration file for command line testing
-RCFILE=~/.nagios_commander.rc
-
-if [[ -r $RCFILE ]] ; then
-     . "$RCFILE"
-fi
-
-# Check for jq (dependency for processing JSON output from Nagios)
-command -v jq >/dev/null 2>&1 || { echo "Command jq is missing. Exiting."; exit 1; }
-
-# set credentials
-USERNAME=$PT_username
-PASSWORD=$PT_password
+#!/bin/bash
+# Puppet task to remove downtime for Nagios hostgroup
 
 # Required options:
 #   -- $PT_nagios_server - determines which nagios host to run against
@@ -27,7 +10,19 @@ PASSWORD=$PT_password
 #	-- $PT_hostgroup
 #   -- $PT_debug
 
-## Puppet variable conversions
+# Load PT_* variables from a configuration file for command line testing
+RCFILE=~/.nagios_commander.rc
+
+if [[ -r $RCFILE ]] ; then
+     . "$RCFILE"
+fi
+
+# Check for jq (dependency for processing JSON output from Nagios)
+command -v jq >/dev/null 2>&1 || { echo "Command jq is missing. Exiting."; exit 1; }
+
+# Set credentials
+USERNAME=$PT_username
+PASSWORD=$PT_password
 
 # Set nagios base URL
 if [ $PT_nagios_server == 'sharedtest' ]; then
@@ -36,7 +31,7 @@ else
     NAGIOS_INSTANCE='http://pro-mon9999.moe.govt.nz/nagios/cgi-bin'
 fi
 
-# Sets the HOSTGROUP variable
+# Set the HOSTGROUP variable
 if [ "$PT_hostgroup" ]; then
 	HOSTGROUP="$PT_hostgroup"
 else
@@ -97,6 +92,7 @@ for HOST in $HOSTLIST; do
     # Find all downtime IDs for host
     DOWNTIME_IDS=`curl -Ss -u $USERNAME:$PASSWORD "$NAGIOS_INSTANCE/statusjson.cgi?query=downtimelist&details=true&hostname=$HOST" | jq -r '.data.downtimelist[].downtime_id'`
 
+    # Delete each downtime ID
     for DOWN_ID in $DOWNTIME_IDS; do
         echo "Deleting downtime $DOWN_ID for host $HOST."
         delete_downtime_by_id
