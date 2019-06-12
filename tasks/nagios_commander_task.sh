@@ -35,7 +35,7 @@ if [[ -r $RCFILE ]] ; then
      . "$RCFILE"
 fi
 
-# Check for jq (dependency)
+# Check for jq (dependency for processing JSON output from Nagios)
 command -v jq >/dev/null 2>&1 || { echo "Command jq is missing. Exiting."; exit 1; }
 
 # set credentials

@@ -1,0 +1,35 @@
+{
+    "description": "Set downtime for hostgroup. Duration defaults to 1 hour. Hostgroup defaults to 'Linux'.",
+    "input_method": "environment",
+    "parameters": {
+      "nagios_server": {
+        "description": "Choose either the sharedtest or production nagios server",
+        "type": "Enum[sharedtest,production]"
+      },
+      "username": {
+        "description": "Nagios username",
+        "type": "String[1]"
+      },
+      "password": {
+        "description": "Nagios password",
+        "type": "String[1]",
+        "sensitive": true
+      },
+      "hostgroup": {
+        "description": "FQDN of specific hostgroup, if required",
+        "type": "Optional[String[1]]"
+      },
+      "time_in_minutes": {
+        "description": "The amount of time (in minutes) to set downtime for.",
+        "type": "Optional[Integer[1]]"
+      },
+      "comment": {
+        "description": "Add a comment providing a reason for your command",
+        "type": "Optional[String[1]]"
+      },
+      "debug": {
+        "description": "Print debug info to stdout.",
+        "type": "Optional[Boolean]"
+      }
+  }
+}
