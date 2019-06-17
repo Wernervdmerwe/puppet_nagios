@@ -81,6 +81,9 @@ class nagios::server (
 
   include nagios::collect_checks
 
+  # Configure Puppet node state checks
+  include nagios::puppetdb
+
   if $graphios_install == true {
     include nagios::graphios
   }
