@@ -5,7 +5,11 @@ HOSTNAME=$1
  
 #echo checking puppet status for $HOSTNAME...
  
-puppetNodeStatusJson=`sudo curl -sS -k -X GET --tlsv1 --cacert /etc/puppetlabs/puppet/ssl/certs/ca.pem --cert /etc/puppetlabs/puppet/ssl/certs/tst-mon9999.moest.govt.nz.pem --key /etc/puppetlabs/puppet/ssl/private_keys/tst-mon9999.moest.govt.nz.pem https://dev-srv9001.moest.govt.nz:8081/pdb/query/v4/nodes/$HOSTNAME`
+puppetNodeStatusJson=`sudo curl -sS -k -X GET --tlsv1 \
+    --cacert /etc/puppetlabs/puppet/ssl/certs/ca.pem \
+    --cert /etc/puppetlabs/puppet/ssl/certs/<%= $::fqdn %>.pem \
+    --key /etc/puppetlabs/puppet/ssl/private_keys/<%= $::fqdn %>.pem \
+    https://dev-srv9001.moest.govt.nz:8081/pdb/query/v4/nodes/$HOSTNAME`
  
 status=`echo $puppetNodeStatusJson | jq -r '.latest_report_status'`
 correctiveChange=`echo $puppetNodeStatusJson | jq -r '.latest_report_corrective_change'`

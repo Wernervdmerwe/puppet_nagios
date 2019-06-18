@@ -16,7 +16,6 @@ class nagios (
   }
   else { include nagios::nagios_client  }
 
-
   # For both server and client
   include nagios::nagios_nrpe
 }
