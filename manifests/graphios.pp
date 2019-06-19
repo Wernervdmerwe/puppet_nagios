@@ -58,9 +58,10 @@ class nagios::graphios (
     notify  => Service['graphios'],
   }
 
-  file {'/etc/init.d/graphios':
-    ensure => 'file',
+  systemd::unit_file { 'graphios.service':
     source => 'puppet:///modules/nagios/graphios.service',
+    enable => true,
+    active => true,
   }
 
   service { 'graphios':
