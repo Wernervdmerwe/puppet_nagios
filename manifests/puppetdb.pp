@@ -29,4 +29,8 @@ class nagios::puppetdb (
     content  => 'nagios  ALL=(ALL) NOPASSWD: /bin/curl',
     priority => 20
   }
+
+  firewalld_service { 'Allow HTTP':
+    ensure  => 'present',
+    service => 'http' , }
 }

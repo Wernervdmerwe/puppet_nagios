@@ -72,7 +72,7 @@ class nagios::server (
     require   => Package[nagios],
   }
 
-    # Fix permisisons on service file
+  # Fix permisisons on service file
   file { '/usr/lib/systemd/system/nagios.service':
     ensure => 'file',
     mode   => '0644',
