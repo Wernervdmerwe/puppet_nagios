@@ -32,5 +32,6 @@ class nagios::puppetdb (
 
   firewalld_service { 'Allow HTTP':
     ensure  => 'present',
-    service => 'http' , }
+    service => 'http' ,
+  }
 }

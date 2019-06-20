@@ -79,6 +79,16 @@ class nagios::server (
     notify => Service['nagios'],
   }
 
+  # Set hostgroups
+  $nagios_hg = hiera(nagios_hostgroup,undef)
+
+  if $nagios_hg {
+    $hostgroups = "${::kernel}, ${nagios_hg}"
+  }
+  else {
+    $hostgroups = $::kernel
+  }
+
   @@nagios_host { $::fqdn:
     ensure     => present,
     alias      => $::hostname,
@@ -87,6 +97,7 @@ class nagios::server (
     hostgroups => $hostgroups,
     target     => "/etc/nagios/conf.d/${::fqdn}.cfg",
     notify     => Service['nagios'],
+    tag        => $::environment,
   }
 
   @@file { "/etc/nagios/conf.d/${::fqdn}.cfg":
