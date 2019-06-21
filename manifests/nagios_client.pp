@@ -1,15 +1,28 @@
 class nagios::nagios_client (
   $nagios_servers           = $nagios::nagios_servers
 ){
+  # Ensure all exported resources are tagged with the correct environment
+  tag "$::environment"
+
+  # Set hostgroups
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
-  if $nagios_hg { $hostgroups = "${::kernel}, ${nagios_hg}" }
-  else { $hostgroups = $::kernel }
+  if $nagios_hg {
+    $hostgroups = "${::kernel}, ${nagios_hg}"
+  }
+  else {
+    $hostgroups = $::kernel
+  }
 
   $nagios_plugins = hiera_array('nagios_plugins',undef)
-  if $nagios_plugins { hiera_include('nagios_plugins') }
 
-  package { [ 'nagios-plugins-nrpe', 'nagios-plugins', 'PyYAML' ]: ensure => installed, }
+  if $nagios_plugins {
+    hiera_include('nagios_plugins')
+  }
+
+  package { [ 'nagios-plugins-nrpe', 'nagios-plugins', 'PyYAML' ]:
+    ensure => installed,
+  }
 
   @@nagios_host { $::fqdn:
     ensure     => present,
@@ -26,7 +39,6 @@ class nagios::nagios_client (
     mode   => '0644',
     owner  => 'nagios',
     group  => 'nagios',
-    tag    => $::environment,
   }
 
   if $nagios_servers {
@@ -43,5 +55,6 @@ class nagios::nagios_client (
     }
   }
 
+  # Create exported resources for nagios_services
   include nagios::standard_checks
 }

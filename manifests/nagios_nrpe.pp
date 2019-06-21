@@ -8,9 +8,9 @@ class nagios::nagios_nrpe (
   # Allow nrpe to run with SELinux
   selinux::boolean { 'nagios_run_sudo': }
   selinux::module { 'allow_nrpe_sudo':
-  ensure    => 'present',
-  source_pp => 'puppet:///modules/nagios/allow_nrpe_sudo.pp',
-}
+    ensure    => 'present',
+    source_te => 'puppet:///modules/nagios/allow_nrpe_sudo.te',
+  }
 
   $plugin_packages.each |$plugin| {
     package { "nagios-plugins-${plugin}": }
@@ -23,7 +23,7 @@ class nagios::nagios_nrpe (
 
   sudo::conf { 'nrpe':
     content  => 'nrpe ALL=(ALL) NOPASSWD: /usr/lib64/nagios/plugins/',
-    priority => 10
+    priority => 10,
   }
 
 }

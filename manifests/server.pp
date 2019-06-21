@@ -1,9 +1,12 @@
 class nagios::server (
+  Boolean $puppetdb_check_enable = $nagios::params::puppetdb_check_enable,
   Boolean $graphios_install = $nagios::params::graphios_install,
   String $graphite_host     = $nagios::params::graphite_host,
 ){
 
-  resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]: purge => true, }
+  resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]:
+    purge => true,
+  }
 
   class {'apache':
     purge_configs => false,
@@ -11,7 +14,9 @@ class nagios::server (
   }
   include apache::mod::php
 
-  package { [ 'nagios','nagios-plugins', 'nagios-plugins-nrpe' ]: ensure => installed, }
+  package { [ 'nagios','nagios-plugins', 'nagios-plugins-nrpe' ]:
+    ensure => installed,
+  }
 
   Nagios_contact      { target => '/etc/nagios/objects/contacts.cfg', }
   Nagios_contactgroup { target => '/etc/nagios/objects/contacts.cfg', }
@@ -21,13 +26,19 @@ class nagios::server (
   Nagios_service      { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
 
   $nagios_contacts = hiera_hash('nagios::contacts',undef)
-  if $nagios_contacts { create_resources (nagios_contact, $nagios_contacts) }
+  if $nagios_contacts {
+    create_resources (nagios_contact, $nagios_contacts)
+  }
 
   $nagios_hostgroups = hiera_hash('nagios::hostgroups',undef)
-  if $nagios_hostgroups { create_resources (nagios_hostgroup, $nagios_hostgroups) }
+  if $nagios_hostgroups {
+    create_resources (nagios_hostgroup, $nagios_hostgroups)
+  }
 
   $nagios_contactgroup = hiera_hash('nagios::contactgroup',undef)
-  if $nagios_contactgroup { create_resources (nagios_contactgroup, $nagios_contactgroup) }
+  if $nagios_contactgroup {
+    create_resources (nagios_contactgroup, $nagios_contactgroup)
+  }
 
   file { '/etc/nagios/conf.d':
     ensure  => 'directory',
@@ -61,6 +72,23 @@ class nagios::server (
     require   => Package[nagios],
   }
 
+  # Fix permisisons on service file
+  file { '/usr/lib/systemd/system/nagios.service':
+    ensure => 'file',
+    mode   => '0644',
+    notify => Service['nagios'],
+  }
+
+  # Set hostgroups
+  $nagios_hg = hiera(nagios_hostgroup,undef)
+
+  if $nagios_hg {
+    $hostgroups = "${::kernel}, ${nagios_hg}"
+  }
+  else {
+    $hostgroups = $::kernel
+  }
+
   @@nagios_host { $::fqdn:
     ensure     => present,
     alias      => $::hostname,
@@ -69,6 +97,7 @@ class nagios::server (
     hostgroups => $hostgroups,
     target     => "/etc/nagios/conf.d/${::fqdn}.cfg",
     notify     => Service['nagios'],
+    tag        => $::environment,
   }
 
   @@file { "/etc/nagios/conf.d/${::fqdn}.cfg":
@@ -81,11 +110,18 @@ class nagios::server (
 
   include nagios::collect_checks
 
+  # Configure Puppet node state checks
+  if $puppetdb_check_enable == true {
+    include nagios::puppetdb
+  }
+
   if $graphios_install == true {
     include nagios::graphios
   }
 
   $nagios_extra_hosts = hiera(nagios_hosts,undef)
-  if $nagios_extra_hosts { create_resources(nagios_host, $nagios_extra_hosts)  }
+  if $nagios_extra_hosts {
+    create_resources(nagios_host, $nagios_extra_hosts)
+  }
 
 }

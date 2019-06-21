@@ -29,6 +29,7 @@ class nagios::collect_checks (
   }
 
   # Collect resources and populate /etc/nagios/nagios_*.cfg
+  # The exported resources must have the tag "$environment" for this to work
   $environments.each | String $env | {
     File <<| tag == $env |>> { notify => Service['nagios'] }
     Nagios_host <<| tag == $env |>> { notify => Service['nagios'] }
