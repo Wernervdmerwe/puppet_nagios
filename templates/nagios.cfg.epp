@@ -31,19 +31,6 @@ cfg_file=/etc/nagios/objects/contacts.cfg
 cfg_file=/etc/nagios/objects/timeperiods.cfg
 cfg_file=/etc/nagios/objects/templates.cfg
 
-# Definitions for monitoring the local (Linux) host
-cfg_file=/etc/nagios/objects/localhost.cfg
-
-# Definitions for monitoring a Windows machine
-#cfg_file=/etc/nagios/objects/windows.cfg
-
-# Definitions for monitoring a router/switch
-#cfg_file=/etc/nagios/objects/switch.cfg
-
-# Definitions for monitoring a network printer
-#cfg_file=/etc/nagios/objects/printer.cfg
-
-
 # You can also tell Nagios to process all config files (with a .cfg
 # extension) in a particular directory by using the cfg_dir
 # directive as shown below:
@@ -809,6 +796,9 @@ enable_event_handlers=1
 # performance data.
 # Values: 1 = process performance data, 0 = do not process performance data
 
+<% if $graphios_install == false { -%>
+process_performance_data=0
+<% } else { -%>
 process_performance_data=1
 
 
@@ -893,6 +883,7 @@ process_performance_data=1
 #host_perfdata_process_empty_results=1
 #service_perfdata_process_empty_results=1
 
+<% } -%>
 
 # OBSESS OVER SERVICE CHECKS OPTION
 # This determines whether or not Nagios will obsess over service

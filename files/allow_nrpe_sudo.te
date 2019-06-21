@@ -1,0 +1,14 @@
+
+module allow_nrpe_sudo 1.0;
+
+require {
+        type nrpe_t;
+        type initrc_var_run_t;
+        type system_dbusd_var_run_t;
+        class unix_stream_socket connectto;
+        class file read;
+}
+
+#============= nrpe_t ==============
+allow nrpe_t initrc_var_run_t:file read;
+allow nrpe_t system_dbusd_var_run_t:unix_stream_socket connectto;
