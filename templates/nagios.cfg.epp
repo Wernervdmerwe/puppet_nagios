@@ -15,7 +15,7 @@
 # for historical purposes.  This should be the first option specified
 # in the config file!!!
 
-log_file=/var/log/nagios/nagios.log
+log_file=<%= $nagios::server::log_dir %>
 
 
 
@@ -35,10 +35,7 @@ cfg_file=/etc/nagios/objects/templates.cfg
 # extension) in a particular directory by using the cfg_dir
 # directive as shown below:
 
-#cfg_dir=/etc/nagios/servers
-#cfg_dir=/etc/nagios/printers
-#cfg_dir=/etc/nagios/switches
-#cfg_dir=/etc/nagios/routers
+cfg_dir=<%= $nagios::server::config_dir %>
 
 
 
@@ -696,7 +693,7 @@ interval_length=60
 # by Nagios Enterprises from the update check is processed in accordance
 # with our privacy policy - see https://api.nagios.org for details.
 
-check_for_updates=1
+check_for_updates=0
 
 
 
@@ -796,7 +793,7 @@ enable_event_handlers=1
 # performance data.
 # Values: 1 = process performance data, 0 = do not process performance data
 
-<% if $graphios_install == false { -%>
+<% if $nagios::server::graphios_install == false { -%>
 process_performance_data=0
 <% } else { -%>
 process_performance_data=1
@@ -823,6 +820,8 @@ process_performance_data=1
 
 #host_perfdata_file=/var/log/nagios/host-perfdata
 #service_perfdata_file=/var/log/nagios/service-perfdata
+host_perfdata_file=<%= $nagios::server::perfdata_dir %>/host-perfdata
+service_perfdata_file=<%= $nagios::server::perfdata_dir %>/service-perfdata
 
 
 
@@ -836,6 +835,8 @@ process_performance_data=1
 
 #host_perfdata_file_template=[HOSTPERFDATA]\t$TIMET$\t$HOSTNAME$\t$HOSTEXECUTIONTIME$\t$HOSTOUTPUT$\t$HOSTPERFDATA$
 #service_perfdata_file_template=[SERVICEPERFDATA]\t$TIMET$\t$HOSTNAME$\t$SERVICEDESC$\t$SERVICEEXECUTIONTIME$\t$SERVICELATENCY$\t$SERVICEOUTPUT$\t$SERVICEPERFDATA$
+host_perfdata_file_template=DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tGRAPHITEPREFIX::$_HOSTGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_HOSTGRAPHITEPOSTFIX$
+service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$\tGRAPHITEPREFIX::$_SERVICEGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_SERVICEGRAPHITEPOSTFIX$
 
 
 
@@ -848,6 +849,8 @@ process_performance_data=1
 
 #host_perfdata_file_mode=a
 #service_perfdata_file_mode=a
+host_perfdata_file_mode=a
+service_perfdata_file_mode=a
 
 
 
@@ -859,6 +862,8 @@ process_performance_data=1
 
 #host_perfdata_file_processing_interval=0
 #service_perfdata_file_processing_interval=0
+host_perfdata_file_processing_interval=15
+service_perfdata_file_processing_interval=15
 
 
 
@@ -869,6 +874,8 @@ process_performance_data=1
 
 #host_perfdata_file_processing_command=process-host-perfdata-file
 #service_perfdata_file_processing_command=process-service-perfdata-file
+host_perfdata_file_processing_command=graphite_perf_host
+service_perfdata_file_processing_command=graphite_perf_service
 
 
 
@@ -1084,7 +1091,7 @@ high_host_flap_threshold=20.0
 #	strict-iso8601	(YYYY-MM-DDTHH:MM:SS)
 #
 
-date_format=us
+date_format=<%= $nagios::server::date_format %>
 
 
 
@@ -1169,8 +1176,8 @@ use_true_regexp_matching=0
 # using the $ADMINEMAIL$ and $ADMINPAGER$ macros in your notification
 # commands.
 
-admin_email=nagios@localhost
-admin_pager=pagenagios@localhost
+admin_email=<%= $nagios::server::admin_email %>
+admin_pager=<%= $nagios::server::admin_email %>
 
 
 
@@ -1266,7 +1273,7 @@ enable_environment_macros=0
 #          8192   = Scheduling
 #          16384  = Workers
 
-debug_level=0
+debug_level=<%= $nagios::server::debug_level %>
 
 
 
@@ -1276,7 +1283,7 @@ debug_level=0
 #         1 = More detailed
 #         2 = Very detailed
 
-debug_verbosity=1
+debug_verbosity=<%= $nagios::server::debug_verbosity %>
 
 
 

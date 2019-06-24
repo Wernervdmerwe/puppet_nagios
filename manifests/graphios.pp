@@ -19,24 +19,6 @@ class nagios::graphios (
     owner  => 'nagios',
   }
 
-  augeas { 'Enable Perfdata':
-    context => '/files/etc/nagios/nagios.cfg',
-    notify  => Service['nagios'],
-    changes => [
-      'set service_perfdata_file /var/spool/nagios/graphios/service-perfdata',
-      'set service_perfdata_file_template DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$\tGRAPHITEPREFIX::$_SERVICEGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_SERVICEGRAPHITEPOSTFIX$',
-      'set service_perfdata_file_mode a',
-      'set service_perfdata_file_processing_interval 15',
-      'set service_perfdata_file_processing_command graphite_perf_service',
-      'set host_perfdata_file /var/spool/nagios/graphios/host-perfdata',
-      'set host_perfdata_file_template DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tGRAPHITEPREFIX::$_HOSTGRAPHITEPREFIX$\tGRAPHITEPOSTFIX::$_HOSTGRAPHITEPOSTFIX$',
-      'set host_perfdata_file_mode a',
-      'set host_perfdata_file_processing_interval 15',
-      'set host_perfdata_file_processing_command graphite_perf_host',
-      'set process_performance_data 1',
-      ],
-  }
-
   nagios_command { 'graphite_perf_host':
     ensure       => 'present',
     command_line => '/bin/mv /var/spool/nagios/graphios/host-perfdata /var/spool/nagios/graphios/host-perfdata.$TIMET$',

@@ -2,6 +2,13 @@ class nagios::server (
   Boolean $puppetdb_check_enable = $nagios::params::puppetdb_check_enable,
   Boolean $graphios_install = $nagios::params::graphios_install,
   String $graphite_host     = $nagios::params::graphite_host,
+  String $config_dir = $nagios::params::config_dir,
+  String $log_dir = $nagios::params::log_dir,
+  String $perfdata_dir = $nagios::params::perfdata_dir,
+  String $date_format = $nagios::params::date_format,
+  String $admin_email = $nagios::params::admin_email,
+  Integer $debug_level = $nagios::params::debug_level,
+  Integer $debug_verbosity = $nagios::params::debug_verbosity,
 ){
 
   resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]:
@@ -38,6 +45,12 @@ class nagios::server (
   $nagios_contactgroup = hiera_hash('nagios::contactgroup',undef)
   if $nagios_contactgroup {
     create_resources (nagios_contactgroup, $nagios_contactgroup)
+  }
+
+  file { '/etc/nagios/nagios.cfg':
+    ensure  => 'file',
+    content => epp('nagios/nagios.cfg.epp'),
+    notify  => Service['nagios'],
   }
 
   file { '/etc/nagios/conf.d':
