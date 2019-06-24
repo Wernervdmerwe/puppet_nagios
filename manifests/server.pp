@@ -1,14 +1,14 @@
 class nagios::server (
   Boolean $puppetdb_check_enable = $nagios::params::puppetdb_check_enable,
-  Boolean $graphios_install = $nagios::params::graphios_install,
-  String $graphite_host     = $nagios::params::graphite_host,
-  String $config_dir = $nagios::params::config_dir,
-  String $log_dir = $nagios::params::log_dir,
-  String $perfdata_dir = $nagios::params::perfdata_dir,
-  String $date_format = $nagios::params::date_format,
-  String $admin_email = $nagios::params::admin_email,
-  Integer $debug_level = $nagios::params::debug_level,
-  Integer $debug_verbosity = $nagios::params::debug_verbosity,
+  Boolean $graphios_install      = $nagios::params::graphios_install,
+  String $graphite_host          = $nagios::params::graphite_host,
+  String $config_dir             = $nagios::params::config_dir,
+  String $log_dir                = $nagios::params::log_dir,
+  String $perfdata_dir           = $nagios::params::perfdata_dir,
+  String $date_format            = $nagios::params::date_format,
+  String $admin_email            = $nagios::params::admin_email,
+  Integer $debug_level           = $nagios::params::debug_level,
+  Integer $debug_verbosity       = $nagios::params::debug_verbosity,
 ){
 
   class {'apache':
