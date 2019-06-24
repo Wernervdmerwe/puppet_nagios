@@ -9,33 +9,30 @@ class nagios::graphios (
     provider => 'pip',
   }
 
-  file {'/var/spool/nagios/graphios':
+  file { $nagios::server::perfdata_dir:
     ensure => 'directory',
     owner  => 'nagios',
   }
 
-  file { ['/var/spool/nagios/graphios/service-perfdata','/var/spool/nagios/graphios/host-perfdata']:
+  file { ["$nagios::server::perfdata_dir/service-perfdata","$nagios::server::perfdata_dir/host-perfdata"]:
     ensure => 'file',
     owner  => 'nagios',
   }
 
   nagios_command { 'graphite_perf_host':
     ensure       => 'present',
-    command_line => '/bin/mv /var/spool/nagios/graphios/host-perfdata /var/spool/nagios/graphios/host-perfdata.$TIMET$',
-    #target       => '/etc/nagios/conf.d/nagios_command.cfg',
+    command_line => "/bin/mv $nagios::server::perfdata_dir/host-perfdata $nagios::server::perfdata_dir/host-perfdata.$TIMET$",
     notify       => Service['nagios'],
   }
 
   nagios_command { 'graphite_perf_service':
     ensure       => 'present',
-    command_line => '/bin/mv /var/spool/nagios/graphios/service-perfdata /var/spool/nagios/graphios/service-perfdata.$TIMET$',
-    #target       => '/etc/nagios/conf.d/nagios_command.cfg',
+    command_line => "/bin/mv $nagios::server::perfdata_dir/service-perfdata $nagios::server::perfdata_dir/service-perfdata.$TIMET$",
     notify       => Service['nagios'],
   }
 
   file {'/etc/graphios/graphios.cfg':
     ensure  => 'file',
-    #source => 'puppet:///modules/nagios/graphios.cfg',
     content => epp('nagios/graphios.cfg.epp', {graphite_host => $graphite_host }),
     notify  => Service['graphios'],
   }
