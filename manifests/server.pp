@@ -11,10 +11,6 @@ class nagios::server (
   Integer $debug_verbosity = $nagios::params::debug_verbosity,
 ){
 
-  resources { [ 'nagios_command', 'nagios_contact', 'nagios_contactgroup', 'nagios_host', 'nagios_hostgroup', 'nagios_service' ]:
-    purge => true,
-  }
-
   class {'apache':
     purge_configs => false,
     mpm_module    => 'prefork',
@@ -25,12 +21,49 @@ class nagios::server (
     ensure => installed,
   }
 
+  # Remove sample config files
+  $sample_files = [
+    '/etc/nagios/objects/localhost.cfg',
+    '/etc/nagios/objects/windows.cfg',
+    '/etc/nagios/objects/switch.cfg',
+    '/etc/nagios/objects/printer.cfg',
+  ]
+
+  $sample_files.each |$path| {
+    file { $path:
+      ensure => 'absent',
+    }
+  }
+
+  # Create main Nagios config file
+  file { '/etc/nagios/nagios.cfg':
+    ensure  => 'file',
+    content => epp('nagios/nagios.cfg.epp'),
+    notify  => Service['nagios'],
+  }
+
+  # Set default config files for Nagios objects
   Nagios_contact      { target => '/etc/nagios/objects/contacts.cfg', }
   Nagios_contactgroup { target => '/etc/nagios/objects/contacts.cfg', }
   Nagios_command      { target => '/etc/nagios/conf.d/nagios_command.cfg', }
   Nagios_host         { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
   Nagios_hostgroup    { target => '/etc/nagios/conf.d/nagios_hostgroup.cfg', }
   Nagios_service      { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
+
+  # Create config directory
+  file { '/etc/nagios/conf.d':
+    ensure  => 'directory',
+    recurse => true,
+    mode    => '0664',
+  }
+
+  # Ensure config file targets are created with the correct permisisons
+  file { [ '/etc/nagios/conf.d/nagios_command.cfg', '/etc/nagios/conf.d/nagios_hostgroup.cfg' ]:
+    ensure => 'file',
+    mode   => '0644',
+    owner  => 'nagios',
+    group  => 'nagios',
+  }
 
   $nagios_contacts = hiera_hash('nagios::contacts',undef)
   if $nagios_contacts {
@@ -47,27 +80,8 @@ class nagios::server (
     create_resources (nagios_contactgroup, $nagios_contactgroup)
   }
 
-  file { '/etc/nagios/nagios.cfg':
-    ensure  => 'file',
-    content => epp('nagios/nagios.cfg.epp'),
-    notify  => Service['nagios'],
-  }
-
-  file { '/etc/nagios/conf.d':
-    ensure  => 'directory',
-    recurse => true,
-    mode    => '0664',
-  }
-
-  file { [ '/etc/nagios/conf.d/nagios_command.cfg', '/etc/nagios/conf.d/nagios_contact.cfg', '/etc/nagios/conf.d/nagios_host.cfg', '/etc/nagios/conf.d/nagios_hostgroup.cfg', '/etc/nagios/conf.d/nagios_service.cfg' ]:
-    ensure => 'file',
-    mode   => '0644',
-    owner  => 'nagios',
-    group  => 'nagios',
-  }
-
   # Deploy nagios_commander
-  file {'/usr/local/bin/nagios_commander.sh':
+  file { '/usr/local/bin/nagios_commander.sh':
     ensure => 'file',
     mode   => '0777',
     source => 'puppet:///modules/nagios/nagios_commander.sh',
@@ -92,7 +106,7 @@ class nagios::server (
     notify => Service['nagios'],
   }
 
-  # Set hostgroups
+  # Set hostgroups for the local NRPE agent on the Nagios server
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
   if $nagios_hg {
@@ -102,6 +116,7 @@ class nagios::server (
     $hostgroups = $::kernel
   }
 
+  # Create exported resources
   @@nagios_host { $::fqdn:
     ensure     => present,
     alias      => $::hostname,
@@ -121,6 +136,7 @@ class nagios::server (
     tag    => $::environment,
   }
 
+  # Gather exported resources from the other NRPE clients
   include nagios::collect_checks
 
   # Configure Puppet node state checks

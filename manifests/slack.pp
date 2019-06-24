@@ -44,8 +44,6 @@ class nagios::slack (
     host_notification_options     => 'd,r',
     service_notification_commands => 'notify-service-by-slack',
     host_notification_commands    => 'notify-host-by-slack',
-    target                        => '/etc/nagios/conf.d/nagios_contact.cfg',
-    #require                       => Class['nagios::server']
   }
 
   nagios_command { 'notify-service-by-slack':
