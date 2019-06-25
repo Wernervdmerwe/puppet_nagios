@@ -11,11 +11,18 @@ class nagios::server (
   Integer $debug_verbosity       = $nagios::params::debug_verbosity,
 ){
 
+  # Install Apache (for Nagios web console)
   class {'apache':
     purge_configs => false,
     mpm_module    => 'prefork',
   }
   include apache::mod::php
+
+  # Allow access to Apache
+  firewalld_service { 'Allow HTTP':
+    ensure  => 'present',
+    service => 'http' ,
+  }
 
   package { [ 'nagios','nagios-plugins', 'nagios-plugins-nrpe' ]:
     ensure => installed,

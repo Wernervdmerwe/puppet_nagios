@@ -1,0 +1,15 @@
+module allow_nagios_curl 1.0;
+
+require {
+        type nagios_t;
+        type puppet_etc_t;
+        type cert_t;
+        class file { getattr open read write };
+        class dir { search write };
+}
+
+#============= nagios_t ==============
+allow nagios_t cert_t:dir write;
+allow nagios_t cert_t:file write;
+allow nagios_t puppet_etc_t:dir search;
+allow nagios_t puppet_etc_t:file { getattr open read };

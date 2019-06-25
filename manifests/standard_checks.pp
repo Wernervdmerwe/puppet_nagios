@@ -13,4 +13,7 @@ class nagios::standard_checks {
     include nagios::plugin::check_ping
   }
 
+  # This check should be enabled for all hosts
+  include nagios::plugin::check_puppetdb_status
+
 }

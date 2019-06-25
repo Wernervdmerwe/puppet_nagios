@@ -22,7 +22,7 @@ class nagios::puppetdb (
     notify       => Service['nagios'],
   }
 
-  # Nagios needs root access to read the Puppet agent SSL files (to access the Puppet DB API)
+  # Nagios needs root access to read the Puppet agent SSL files (in order to access the Puppet DB API)
   include sudo
 
   sudo::conf { 'nagios':
@@ -30,8 +30,10 @@ class nagios::puppetdb (
     priority => 20
   }
 
-  firewalld_service { 'Allow HTTP':
-    ensure  => 'present',
-    service => 'http' ,
+  # Nagios needs access to files with context puppet_etc_t and cert_t to run the curl command
+  selinux::module { 'allow_nagios_curl':
+    ensure    => 'present',
+    source_te => 'puppet:///modules/nagios/allow_nagios_curl.te',
   }
+  
 }
