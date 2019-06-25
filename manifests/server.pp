@@ -125,27 +125,7 @@ class nagios::server (
     $hostgroups = $::kernel
   }
 
-  # Create exported resources
-  @@nagios_host { $::fqdn:
-    ensure     => present,
-    alias      => $::hostname,
-    address    => $::ipaddress,
-    use        => 'linux-server',
-    hostgroups => $hostgroups,
-    target     => "/etc/nagios/conf.d/${::fqdn}.cfg",
-    notify     => Service['nagios'],
-    tag        => $::environment,
-  }
-
-  @@file { "/etc/nagios/conf.d/${::fqdn}.cfg":
-    ensure => 'file',
-    mode   => '0644',
-    owner  => 'nagios',
-    group  => 'nagios',
-    tag    => $::environment,
-  }
-
-  # Gather exported resources from the other NRPE clients
+  # Gather exported resources from NRPE clients
   include nagios::collect_checks
 
   # Configure Puppet node state checks
