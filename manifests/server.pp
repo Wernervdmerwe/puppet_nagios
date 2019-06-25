@@ -1,3 +1,4 @@
+# Configure Nagios server
 class nagios::server (
   Boolean $puppetdb_check_enable = $nagios::params::puppetdb_check_enable,
   Boolean $graphios_install      = $nagios::params::graphios_install,
@@ -24,7 +25,8 @@ class nagios::server (
     service => 'http' ,
   }
 
-  package { [ 'nagios','nagios-plugins', 'nagios-plugins-nrpe' ]:
+  # Install the Nagios server packages
+  package { [ 'nagios' ]:
     ensure => installed,
   }
 
@@ -155,7 +157,20 @@ class nagios::server (
     include nagios::graphios
   }
 
-  $nagios_extra_hosts = hiera(nagios_hosts,undef)
+  # Add host definitions defined in hiera
+  # Example host definition:
+  #    nagios::server::nagios_extra_hosts:
+  #    dev-srv0053.moest.govt.nz:
+  #      ensure: 'present'
+  #      alias: 'dev-srv0053.moest.govt.nz'
+  #      address: '10.48.65.223'
+  #      use: 'windows-server'
+  #      hostgroups: 'Windows'
+  #      notification_period: 'workhours'
+  #      tag: 'development'
+
+  $nagios_extra_hosts = lookup("nagios::server::nagios_extra_hosts")
+
   if $nagios_extra_hosts {
     create_resources(nagios_host, $nagios_extra_hosts)
   }
