@@ -1,15 +1,21 @@
 # Configure Nagios server
 class nagios::server (
   Boolean $puppetdb_check_enable = $nagios::params::puppetdb_check_enable,
+  String $puppetdb_host          = $nagios::params::puppetdb_host,
   Boolean $graphios_install      = $nagios::params::graphios_install,
   String $graphite_host          = $nagios::params::graphite_host,
-  String $config_dir             = $nagios::params::config_dir,
   String $log_dir                = $nagios::params::log_dir,
   String $perfdata_dir           = $nagios::params::perfdata_dir,
   String $date_format            = $nagios::params::date_format,
   String $admin_email            = $nagios::params::admin_email,
   Integer $debug_level           = $nagios::params::debug_level,
   Integer $debug_verbosity       = $nagios::params::debug_verbosity,
+  String $command_config         = $nagios::params::command_config,
+  String $hostgroup_config       = $nagios::params::hostgroup_config,
+  String $host_config            = $nagios::params::host_config,
+  String $service_config         = $nagios::params::service_config,
+  String $contact_config         = $nagios::params::contact_config,
+  String $contactgroup_config    = $nagios::params::contactgroup_config,
 ){
 
   # Install Apache (for Nagios web console)
@@ -51,27 +57,45 @@ class nagios::server (
     notify  => Service['nagios'],
   }
 
-  # Set default config files for Nagios objects
-  Nagios_contact      { target => '/etc/nagios/objects/contacts.cfg', }
-  Nagios_contactgroup { target => '/etc/nagios/objects/contacts.cfg', }
-  Nagios_command      { target => '/etc/nagios/conf.d/nagios_command.cfg', }
-  Nagios_host         { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
-  Nagios_hostgroup    { target => '/etc/nagios/conf.d/nagios_hostgroup.cfg', }
-  Nagios_service      { target => "/etc/nagios/conf.d/${::fqdn}.cfg", }
+  # Remove old Nagios objects
+  $resource_types = [
+    'nagios_command',
+    'nagios_contact',
+    'nagios_contactgroup',
+    'nagios_host',
+    'nagios_hostgroup',
+    'nagios_service'
+  ]
 
-  # Create config directory
-  file { '/etc/nagios/conf.d':
-    ensure  => 'directory',
-    recurse => true,
-    mode    => '0664',
+  $resource_types.each |$resource| {
+    resources { $resource:
+      purge => true,
+    }
   }
 
+  # Set default config files for Nagios objects
+  Nagios_contact      { target => "${contact_config}", }
+  Nagios_contactgroup { target => "${contactgroup_config}", }
+  Nagios_command      { target => "${command_config}", }
+  Nagios_host         { target => "${host_config}", }
+  Nagios_hostgroup    { target => "${hostgroup_config}", }
+  Nagios_service      { target => "${service_config}", }
+
   # Ensure config file targets are created with the correct permisisons
-  file { [ '/etc/nagios/conf.d/nagios_command.cfg', '/etc/nagios/conf.d/nagios_hostgroup.cfg' ]:
-    ensure => 'file',
-    mode   => '0644',
-    owner  => 'nagios',
-    group  => 'nagios',
+  $config_files = [
+    $command_config,
+    $hostgroup_config,
+    $host_config,
+    $service_config,
+    $contact_config,
+    $contactgroup_config
+  ]
+
+  $config_files.each |$path| {
+    file { $path:
+      ensure => 'file',
+      mode   => '0664',
+    }
   }
 
   $nagios_contacts = hiera_hash('nagios::contacts',undef)
@@ -84,9 +108,9 @@ class nagios::server (
     create_resources (nagios_hostgroup, $nagios_hostgroups)
   }
 
-  $nagios_contactgroup = hiera_hash('nagios::contactgroup',undef)
-  if $nagios_contactgroup {
-    create_resources (nagios_contactgroup, $nagios_contactgroup)
+  $nagios_contactgroups = hiera_hash('nagios::contactgroup',undef)
+  if $nagios_contactgroups {
+    create_resources (nagios_contactgroup, $nagios_contactgroups)
   }
 
   # Deploy nagios_commander
@@ -104,7 +128,6 @@ class nagios::server (
 
   service { 'nagios':
     ensure    => 'running',
-    subscribe => File['/etc/nagios/conf.d'],
     require   => Package[nagios],
   }
 
@@ -149,7 +172,7 @@ class nagios::server (
   #      notification_period: 'workhours'
   #      tag: 'development'
 
-  $nagios_extra_hosts = lookup("nagios::server::nagios_extra_hosts")
+  #$nagios_extra_hosts = lookup("nagios::server::nagios_extra_hosts")
 
   if $nagios_extra_hosts {
     create_resources(nagios_host, $nagios_extra_hosts)

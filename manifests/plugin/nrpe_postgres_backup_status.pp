@@ -16,7 +16,6 @@ class nagios::plugin::nrpe_postgres_backup_status {
   @@nagios_service {"Check postgres backup status ${::hostname} ${::environment}":
     check_command       => 'check_nrpe!postgres_backup_status',
     service_description => "Postgres backup status on ${::hostname}",
-    target              => "/etc/nagios/conf.d/${::fqdn}.cfg",
     host_name           => $::fqdn,
     use                 => 'generic-service',
   }

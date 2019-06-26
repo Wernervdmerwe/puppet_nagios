@@ -14,7 +14,6 @@ class nagios::collect_checks (
     check_interval     => 1,
     retry_interval     => 1,
     max_check_attempts => 2,
-    target             => "/etc/nagios/conf.d/${::fqdn}.cfg"
   }
 
   Nagios_service {
@@ -24,8 +23,7 @@ class nagios::collect_checks (
     ensure              => 'present',
     use                 => 'generic-service',
     notification_period => '24x7',
-    target              => "/etc/nagios/conf.d/${::fqdn}.cfg",
-    require             => Nagios_host[$::fqdn]
+    require             => "Nagios_host[${facts['fqdn'].downcase}]"
   }
 
   # Collect resources and populate /etc/nagios/nagios_*.cfg

@@ -12,24 +12,18 @@ class nagios::export_resources {
   else {
     $hostgroups = $::kernel
   }
-  
-  @@nagios_host { $::fqdn:
-    ensure     => present,
-    alias      => $::hostname,
-    address    => $::ipaddress,
-    use        => 'linux-server',
-    hostgroups => $hostgroups,
-    target     => "/etc/nagios/conf.d/${::fqdn}.cfg",
-    notify     => Service['nagios'],
-  }
 
-  @@file { "/etc/nagios/conf.d/${::fqdn}.cfg":
-    ensure => 'file',
-    mode   => '0644',
-    owner  => 'nagios',
-    group  => 'nagios',
+  # TODO: check if we need a different host template for windows servers
+  
+  # Create exported resources for Nagios hosts
+  @@nagios_host { "${facts['fqdn'].downcase}":
+    ensure     => present,
+    alias      => "${facts['hostname'].downcase}",
+    address    => "${facts['ipaddress']}",
+    use        => 'linux-server',
+    hostgroups => "$hostgroups",
   }
   
-  # Create exported resources for nagios_services
+  # Create exported resources for Nagios services
   include nagios::standard_checks
 }

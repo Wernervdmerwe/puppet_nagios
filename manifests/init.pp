@@ -9,7 +9,6 @@ class nagios (
   # Service Defaults
   Nagios_service {
     host_name => $::fqdn,
-    target    => "/etc/nagios/conf.d/${::fqdn}.cfg",
   }
 
   if ($role == 'server') {

@@ -33,7 +33,6 @@ class nagios::plugin::nrpe_website(
     @@nagios_service {"Check Site ${::hostname} ${site}":
       check_command       => "check_nrpe!check_website_response -a ${warn} ${crit} \"${site}\"",
       service_description => "Response from ${site}",
-      target              => "/etc/nagios/conf.d/${::fqdn}.cfg",
       host_name           => $::fqdn,
       use                 => 'generic-service',
     }
