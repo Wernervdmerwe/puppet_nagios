@@ -1,3 +1,4 @@
+# Create a Nagios check that queries the last report status for a node from PuppetDB 
 class nagios::puppetdb {
 
   # jq is required for JSON parsing
@@ -33,5 +34,5 @@ class nagios::puppetdb {
     ensure    => 'present',
     source_te => 'puppet:///modules/nagios/allow_nagios_curl.te',
   }
-  
+
 }

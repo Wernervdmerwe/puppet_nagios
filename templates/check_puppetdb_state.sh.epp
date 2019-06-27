@@ -1,6 +1,12 @@
 #/bin/bash
-# Requires valid puppet certname (hostname) as an argument
+# This script uses curl to query the PuppetDB nodes API to determine the most recent Puppet run status.
+# It is designed to be used with Nagios. The return codes are:
+#   * 0: OK
+#   * 1: WARNING
+#   * 2: CRITICAL
+#   * 3: UNKNOWN
 
+# Requires valid puppet certname (hostname) as an argument
 HOSTNAME=$1
 
 #echo checking puppet status for $HOSTNAME...
@@ -11,6 +17,9 @@ puppetNodeStatusJson=`sudo curl -sS -k -X GET --tlsv1 \
     --key /etc/puppetlabs/puppet/ssl/private_keys/<%= $::fqdn %>.pem \
     https://<%= $nagios::server::puppetdb_host %>:8081/pdb/query/v4/nodes/$HOSTNAME`
 
+# Print full output for debugging
+#echo $puppetNodeStatusJson | jq '.'
+
 status=`echo $puppetNodeStatusJson | jq -r '.latest_report_status'`
 correctiveChange=`echo $puppetNodeStatusJson | jq -r '.latest_report_corrective_change'`
 isNoop=`echo $puppetNodeStatusJson | jq -r '.latest_report_noop'`
@@ -18,15 +27,11 @@ noopPending=`echo $puppetNodeStatusJson | jq -r '.latest_report_noop_pending'`
 reportTime=`echo $puppetNodeStatusJson | jq -r '.report_timestamp'`
 
 # Calculate hours since last report
-string1=$reportTime
-string2=`date`
-StartDate=$(date -u -d "$string1" +"%s")
-FinalDate=$(date -u -d "$string2" +"%s")
-hours=`date -u -d "0 $FinalDate sec - $StartDate sec" +"%H"`
-
-# Print full output for debugging
-#echo $puppetNodeStatusJson | jq '.'
-
+currentTime=$(date)
+startDate=$(date -u -d "$reportTime" +"%s")
+finalDate=$(date -u -d "$currentTime" +"%s")
+seconds=$(( finalDate - startDate ))
+hours=$(( seconds / 60 / 60 ))
 
 if [[ $hours -gt 1 ]]; then
     echo "Last report is more than one hour old."
