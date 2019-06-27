@@ -16,6 +16,7 @@ class nagios::server (
   String $service_config         = $nagios::params::service_config,
   String $contact_config         = $nagios::params::contact_config,
   String $contactgroup_config    = $nagios::params::contactgroup_config,
+  Hash $nagios_extra_hosts       = {}
 ){
 
   # Install Apache (for Nagios web console)
@@ -74,12 +75,12 @@ class nagios::server (
   }
 
   # Set default config files for Nagios objects
-  Nagios_contact      { target => "${contact_config}", }
-  Nagios_contactgroup { target => "${contactgroup_config}", }
-  Nagios_command      { target => "${command_config}", }
-  Nagios_host         { target => "${host_config}", }
-  Nagios_hostgroup    { target => "${hostgroup_config}", }
-  Nagios_service      { target => "${service_config}", }
+  Nagios_contact      { target => $contact_config, }
+  Nagios_contactgroup { target => $contactgroup_config, }
+  Nagios_command      { target => $command_config, }
+  Nagios_host         { target => $host_config, }
+  Nagios_hostgroup    { target => $hostgroup_config, }
+  Nagios_service      { target => $service_config, }
 
   # Ensure config file targets are created with the correct permisisons
   $config_files = [
@@ -127,8 +128,8 @@ class nagios::server (
   }
 
   service { 'nagios':
-    ensure    => 'running',
-    require   => Package[nagios],
+    ensure  => 'running',
+    require => Package[nagios],
   }
 
   # Fix permisisons on service file
@@ -171,8 +172,6 @@ class nagios::server (
   #      hostgroups: 'Windows'
   #      notification_period: 'workhours'
   #      tag: 'development'
-
-  #$nagios_extra_hosts = lookup("nagios::server::nagios_extra_hosts")
 
   if $nagios_extra_hosts {
     create_resources(nagios_host, $nagios_extra_hosts)
