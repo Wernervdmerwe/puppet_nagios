@@ -99,6 +99,16 @@ class nagios::server (
     }
   }
 
+  # Set defaults for Nagios_contact
+  Nagios_contact {
+    host_notification_period      => '24x7',
+    service_notification_period   => '24x7',
+    service_notification_options  => 'w,u,c,r,f,s',
+    host_notification_options     => 'd,u,r,f,s',
+    service_notification_commands => 'notify-service-by-email',
+    host_notification_commands    => 'notify-host-by-email',
+  }
+
   $nagios_contacts = hiera_hash('nagios::contacts',undef)
   if $nagios_contacts {
     create_resources (nagios_contact, $nagios_contacts)

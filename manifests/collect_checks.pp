@@ -1,21 +1,16 @@
+# Gather the exported resources from Nagios clients and create Nagios hosts and services
 class nagios::collect_checks (
   Array $environments = [ $::environment ]
 ){
-  Nagios_contact {
-    host_notification_period      => '24x7',
-    service_notification_period   => '24x7',
-    service_notification_options  => 'w,u,c,r,f,s',
-    host_notification_options     => 'd,u,r,f,s',
-    service_notification_commands => 'notify-service-by-email',
-    host_notification_commands    => 'notify-host-by-email',
-  }
 
+  # Set defaults for Nagios_host
   Nagios_host {
     check_interval     => 1,
     retry_interval     => 1,
     max_check_attempts => 2,
   }
 
+  # Set defaults for Nagios_service
   Nagios_service {
     check_interval      => 1,
     retry_interval      => 1,
@@ -23,7 +18,7 @@ class nagios::collect_checks (
     ensure              => 'present',
     use                 => 'generic-service',
     notification_period => '24x7',
-    require             => "Nagios_host[${facts['fqdn'].downcase}]"
+    require             => "Nagios_host[${trusted['certname']}]"
   }
 
   # Collect resources and populate /etc/nagios/nagios_*.cfg

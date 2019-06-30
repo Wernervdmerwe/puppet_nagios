@@ -1,8 +1,8 @@
 # Export file, host and service resources for Nagios clients
 class nagios::export_resources {
   # Ensure all exported resources are tagged with the correct environment
-  tag "$::environment"
-  
+  tag $::environment
+
   # Set hostgroups for host definition
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
@@ -14,16 +14,16 @@ class nagios::export_resources {
   }
 
   # TODO: check if we need a different host template for windows servers
-  
+
   # Create exported resources for Nagios hosts
-  @@nagios_host { "${facts['fqdn'].downcase}":
+  @@nagios_host { $trusted['certname']:
     ensure     => present,
-    alias      => "${facts['hostname'].downcase}",
-    address    => "${facts['ipaddress']}",
+    alias      => $trusted['hostname'],
+    address    => $facts['ipaddress'],
     use        => 'linux-server',
-    hostgroups => "$hostgroups",
+    hostgroups => $hostgroups,
   }
-  
+
   # Create exported resources for Nagios services
   include nagios::standard_checks
 }
