@@ -1,3 +1,4 @@
+# Install and configure graphios
 class nagios::graphios (
   $graphite_host = $nagios::params::graphite_host
 ){
@@ -9,7 +10,7 @@ class nagios::graphios (
     provider => 'pip',
   }
 
-  file { "${nagios::server::perfdata_dir}":
+  file { $nagios::server::perfdata_dir:
     ensure => 'directory',
     owner  => 'nagios',
   }

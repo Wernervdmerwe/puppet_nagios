@@ -1,3 +1,4 @@
+# Configure Slack notifications for Nagios
 class nagios::slack (
   String $opt_token,
   String $opt_domain,
@@ -30,7 +31,7 @@ class nagios::slack (
   file_line {'Set Slack Token':
     ensure  => 'present',
     line    => "my \$opt_token = \"${opt_token}\";",
-    match   => "^my.+opt_token\s+=",
+    match   => '^my.+opt_token\s+=',
     path    => '/usr/local/bin/slack_nagios.pl',
     require => Exec['Pull down nagios-slack executable']
   }
@@ -46,15 +47,18 @@ class nagios::slack (
     host_notification_commands    => 'notify-host-by-slack',
   }
 
+  # lint:ignore:140chars
   nagios_command { 'notify-service-by-slack':
     ensure       => 'present',
     command_name => 'notify-service-by-slack',
     command_line => "/usr/local/bin/slack_nagios.pl -field slack_channel=${slack_service_channel} -field HOSTALIAS=\"\$HOSTNAME\$\" -field SERVICEDESC=\"\$SERVICEDESC\$\" -field SERVICESTATE=\"\$SERVICESTATE\$\" -field SERVICEOUTPUT=\"\$SERVICEOUTPUT\$\" -field NOTIFICATIONTYPE=\"\$NOTIFICATIONTYPE\$\"",
   }
+
   nagios_command { 'notify-host-by-slack':
     ensure       => 'present',
     command_name => 'notify-host-by-slack',
     command_line => "/usr/local/bin/slack_nagios.pl -field slack_channel=${slack_host_channel} -field HOSTALIAS=\"\$HOSTNAME\$\" -field HOSTSTATE=\"\$HOSTSTATE\$\" -field HOSTOUTPUT=\"\$HOSTOUTPUT\$\" -field NOTIFICATIONTYPE=\"\$NOTIFICATIONTYPE\$\"",
   }
+  # lint:endignore
 
 }

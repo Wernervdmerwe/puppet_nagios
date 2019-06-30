@@ -1,3 +1,4 @@
+# Create exported resources for standard Nagios checks
 class nagios::standard_checks {
 
   if $::kernel == 'Linux' {
