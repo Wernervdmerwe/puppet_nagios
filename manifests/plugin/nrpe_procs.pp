@@ -1,3 +1,4 @@
+# Export Nagios service for check_procs
 class nagios::plugin::nrpe_procs (
   $warn = 450,
   $crit = 600

@@ -1,3 +1,4 @@
+# Export Nagios service to check yum patching state
 class nagios::plugin::nrpe_yum_filecheck {
 
 # NRPE Command

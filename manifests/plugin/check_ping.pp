@@ -1,3 +1,4 @@
+# Export Nagios service for check_ping
 class nagios::plugin::check_ping (
   $warn = 20,
   $crit = 60

@@ -1,3 +1,4 @@
+# Export Nagios service for check_load
 class nagios::plugin::nrpe_core_load (
   $warn = 3,
   $crit = 5

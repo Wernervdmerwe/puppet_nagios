@@ -1,3 +1,4 @@
+# Export Nagios service for check_puppetagent
 class nagios::plugin::nrpe_puppet(
   $warn = 3600,
   $crit = 9000

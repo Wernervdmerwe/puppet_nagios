@@ -1,3 +1,4 @@
+# Export Nagios service for check_memory
 class nagios::plugin::nrpe_memory(
   $ensure = 'present',
   $warn = 85,

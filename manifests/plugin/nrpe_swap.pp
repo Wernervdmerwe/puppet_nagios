@@ -1,3 +1,4 @@
+# Export Nagios service for check_swap
 class nagios::plugin::nrpe_swap (
   $ensure = 'present',
   $warn = 20,

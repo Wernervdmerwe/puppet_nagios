@@ -1,3 +1,5 @@
+# Export Nagios service for check_tcp
+#
 #Usage:
 #check_tcp -H host -p port [-w <warning time>] [-c <critical time>] [-s <send string>]
 #[-e <expect string>] [-q <quit string>][-m <maximum bytes>] [-d <delay>]
@@ -24,17 +26,18 @@ class nagios::plugin::nrpe_tcpcheck(
   $item_list = [{ url => 'google.com', port => '443', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
 ){
 
-# NRPE Command
+  # NRPE Command
   nrpe::command { 'check_tcp-port_response':
     ensure  => present,
     command => 'check_tcp -H $ARG1$ -p $ARG2$ -w "$ARG3$" -c "$ARG3$"';
   }
 
-
-# Nagios Check
+  # Nagios Check
   $item_list.each | $item | {
+    $command = "check_nrpe!check_tcp-port_response -a ${item[url]} ${item[port]} ${item[warn_limit_ms]} ${item[crit_limit_ms]}"
+
     @@nagios_service {"Check ${item[url]}:${item[port]} from ${::hostname}":
-      check_command       => "check_nrpe!check_tcp-port_response -a ${item[url]} ${item[port]} ${item[warn_limit_ms]} ${item[crit_limit_ms]}",
+      check_command       => $command,
       service_description => "Response from ${item[url]}:${item[port]}",
       use                 => 'generic-service',
     }

@@ -1,3 +1,4 @@
+# Export Nagios service to check Postgres backup status
 class nagios::plugin::nrpe_postgres_backup_status {
 
   nrpe::plugin { 'check_postgres_backup.sh':

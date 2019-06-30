@@ -1,3 +1,4 @@
+# Export Nagios service to check for zombie processes
 class nagios::plugin::nrpe_zombies (
   $warn = 5,
   $crit = 10

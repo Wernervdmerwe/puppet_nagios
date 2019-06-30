@@ -1,3 +1,4 @@
+# Export Nagios service for check_users
 class nagios::plugin::nrpe_users (
   $warn = 5,
   $crit = 10
