@@ -18,6 +18,7 @@ class nagios::plugin::nrpe_memory(
   @@nagios_service { "check_memory_${::hostname}":
     service_description => 'Memory Usage',
     check_command       => 'check_nrpe!check_memory',
+    tag                 => $nagios::tag,
   }
 
 }

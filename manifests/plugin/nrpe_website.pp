@@ -1,20 +1,19 @@
-#Called with the following command:
-#check_command check_website_response!"http://www.domain.com/index.html"!1000!2000 
-#This script will work on POSIX systems has been tested with the Dash shell in Linux Debian and Nagios core 3.2.1
-#To use the --no-check-certificate option configure as follows:
-#command_line $USER1$/check_website_response.sh -u $ARG1$ -w $ARG2$ -c $ARG3$ $ARG4$
-#check_command check_website_response!"http://www.domain.com/index.html"!3000!4000!-nocert
-#bash check_website_response.sh -w 2000 -c 5000 -u "https://security.education.govt.nz"
+#
+# # Hiera config example:
+# nagios::plugin::nrpe_website::item_list:
+#   - url: 'http://google.com'
+# 	  warn_limit_ms: '2000'
+# 	  crit_limit_ms: '5000'
+#   - url: 'http://duckduckgo.com'
+# 	  warn_limit_ms: '1000'
+# 	  crit_limit_ms: '3000'
+#
+# To be able to pass arguments to NRPE you need to modify nrpe.cfg setting 'dont_blame_nrpe=1'
+#################################################################################################
 
 class nagios::plugin::nrpe_website(
-  $warn = 2000,
-  $crit = 5000,
-  $weburl = []
+  $item_list = [{ url => 'http://google.com', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
 ){
-
-  package {'nmap':
-    ensure => 'present',
-  }
 
   nrpe::plugin { 'check_website_response':
       ensure => present,
@@ -25,16 +24,19 @@ class nagios::plugin::nrpe_website(
 # NRPE Command
   nrpe::command { 'check_website_response':
     ensure  => present,
-    command => 'check_website_response -w $ARG1$ -c $ARG2$ -u "$ARG3$" -nocert';
+    command => 'check_website_response -u $ARG1$ -w $ARG2$ -c "$ARG3$" -nocert';
   }
 
 # Nagios Check
-  $weburl.each |String $site| {
-    @@nagios_service {"Check Site ${::hostname} ${site}":
-      check_command       => "check_nrpe!check_website_response -a ${warn} ${crit} \"${site}\"",
-      service_description => "Response from ${site}",
+  $item_list.each | $item | {
+    $command = "check_nrpe!check_website_response -a ${item[url]} ${item[warn_limit_ms]} ${item[crit_limit_ms]}"
+
+    @@nagios_service {"Check site response ${::hostname} ${item[url]}":
+      check_command       => $command,
+      service_description => "Response from ${item[url]}",
       host_name           => $::fqdn,
       use                 => 'generic-service',
+      tag                 => $nagios::tag,
     }
   }
 }

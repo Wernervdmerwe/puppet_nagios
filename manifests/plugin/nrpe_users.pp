@@ -14,5 +14,6 @@ class nagios::plugin::nrpe_users (
   @@nagios_service { "check-users_${::hostname}":
     check_command       => 'check_nrpe!check_users',
     service_description => 'Current Users',
+    tag                 => $nagios::tag,
   }
 }

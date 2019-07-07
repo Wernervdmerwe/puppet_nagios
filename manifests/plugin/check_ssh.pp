@@ -7,5 +7,6 @@ class nagios::plugin::check_ssh {
       use                 => 'generic-service',
       host_name           => $::fqdn,
       service_description => 'SSH',
+      tag                 => $nagios::tag,
   }
 }

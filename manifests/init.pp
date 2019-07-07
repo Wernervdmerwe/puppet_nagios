@@ -1,9 +1,10 @@
 # Install and configure Nagios server and client.
 # $role parameter should be set to 'server' to configure node as a nagios server
 class nagios (
-  $role = $nagios::params::role,
+  $role           = $nagios::params::role,
   $nagios_servers = lookup('nrpe::allowed_hosts', Array[String], 'first', undef),
-  $notify_slack = false,
+  $notify_slack   = false,
+  $tag            = $::environment,
 ) inherits nagios::params {
 
   # Service Defaults

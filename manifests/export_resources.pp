@@ -1,8 +1,5 @@
 # Export file, host and service resources for Nagios clients
 class nagios::export_resources {
-  # Ensure all exported resources are tagged with the correct environment
-  tag $::environment
-
   # Set hostgroups for host definition
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
@@ -22,6 +19,7 @@ class nagios::export_resources {
     address    => $facts['ipaddress'],
     use        => 'linux-server',
     hostgroups => $hostgroups,
+    tag        => $nagios::tag
   }
 
   # Create exported resources for Nagios services

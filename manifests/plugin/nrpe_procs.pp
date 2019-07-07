@@ -14,5 +14,6 @@ class nagios::plugin::nrpe_procs (
   @@nagios_service { "check-procs_${::hostname}":
     check_command       => 'check_nrpe!check_procs_total',
     service_description => 'Current Processes',
+    tag                 => $nagios::tag,
   }
 }

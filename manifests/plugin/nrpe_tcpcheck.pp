@@ -29,7 +29,7 @@ class nagios::plugin::nrpe_tcpcheck(
   # NRPE Command
   nrpe::command { 'check_tcp-port_response':
     ensure  => present,
-    command => 'check_tcp -H $ARG1$ -p $ARG2$ -w "$ARG3$" -c "$ARG3$"';
+    command => 'check_tcp -H $ARG1$ -p $ARG2$ -w "$ARG3$" -c "$ARG4$"';
   }
 
   # Nagios Check
@@ -40,6 +40,7 @@ class nagios::plugin::nrpe_tcpcheck(
       check_command       => $command,
       service_description => "Response from ${item[url]}:${item[port]}",
       use                 => 'generic-service',
+      tag                 => $nagios::tag,
     }
   }
 }
