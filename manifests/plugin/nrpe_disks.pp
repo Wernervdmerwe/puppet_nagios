@@ -17,5 +17,6 @@ class nagios::plugin::nrpe_disks (
   @@nagios_service { "check-disks_${::hostname}":
     check_command       => 'check_nrpe!check_disks',
     service_description => 'Free Space',
+    tag                 => $nagios::tag,
   }
 }

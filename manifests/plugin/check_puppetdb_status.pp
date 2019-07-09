@@ -6,5 +6,6 @@ class nagios::plugin::check_puppetdb_status {
     service_description => 'Puppet Agent - last run status',
     host_name           => $trusted['certname'],
     notify              => Service['nagios'],
+    tag                 => $nagios::tag,
   }
 }

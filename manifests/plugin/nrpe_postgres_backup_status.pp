@@ -19,6 +19,7 @@ class nagios::plugin::nrpe_postgres_backup_status {
     service_description => "Postgres backup status on ${::hostname}",
     host_name           => $::fqdn,
     use                 => 'generic-service',
+    tag                 => $nagios::tag,
   }
 }
 
