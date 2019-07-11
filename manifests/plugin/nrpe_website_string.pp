@@ -3,13 +3,13 @@
 # nagios::plugin::nrpe_website_string::item_list:
 #   - url: 'google.com'
 #     string: 'google'
-# 	  warn_limit_s: '2'
-# 	  crit_limit_s: '5'
+#     warn_limit_s: '2'
+#     crit_limit_s: '5'
 #     timeout: '10'
 #   - url: 'duckduckgo.com'
 #     string: 'search'
-# 	  warn_limit_s: '1'
-# 	  crit_limit_s: '3'
+#     warn_limit_s: '1'
+#     crit_limit_s: '3'
 #     timeout: '10'
 #
 # By default check connects via SSL!
