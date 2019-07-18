@@ -5,7 +5,7 @@ class nagios::params{
   $graphite_host         = '127.0.0.1'
   $slack_service_channel = '#nagios-alerts'
   $slack_host_channel    = '#nagios-alerts'
-  $puppetdb_check_enable = false
+  $puppetdb_check_enable = true
   $puppetdb_host         = 'dev-srv9001.moest.govt.nz'
   $log_dir               = '/var/log/nagios/nagios.log'
   $perfdata_dir          = '/var/spool/nagios/graphios'
