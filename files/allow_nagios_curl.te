@@ -4,8 +4,13 @@ require {
         type nagios_t;
         type puppet_etc_t;
         type cert_t;
-        class file { getattr open read write };
-        class dir { search write };
+        type home_cert_t;
+        type initrc_var_run_t;
+        type system_dbusd_t;
+        class unix_stream_socket connectto;
+        class dbus send_msg;
+        class file { getattr lock open read write };
+        class dir { getattr search write };
 }
 
 #============= nagios_t ==============
@@ -13,3 +18,7 @@ allow nagios_t cert_t:dir write;
 allow nagios_t cert_t:file write;
 allow nagios_t puppet_etc_t:dir search;
 allow nagios_t puppet_etc_t:file { getattr open read };
+allow nagios_t home_cert_t:dir { getattr search };
+allow nagios_t initrc_var_run_t:file { lock open read };
+allow nagios_t system_dbusd_t:dbus send_msg;
+allow nagios_t system_dbusd_t:unix_stream_socket connectto;
