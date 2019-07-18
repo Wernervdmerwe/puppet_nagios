@@ -6,7 +6,7 @@ class nagios::params{
   $slack_service_channel = '#nagios-alerts'
   $slack_host_channel    = '#nagios-alerts'
   $puppetdb_check_enable = true
-  $puppetdb_host         = 'pro-adm9005.govt.nz'
+  $puppetdb_host         = 'pro-adm9005.moe.govt.nz'
   $log_dir               = '/var/log/nagios/nagios.log'
   $perfdata_dir          = '/var/spool/nagios/graphios'
   $date_format           = 'us'
