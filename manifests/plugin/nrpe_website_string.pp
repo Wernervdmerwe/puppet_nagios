@@ -37,7 +37,7 @@ class nagios::plugin::nrpe_website_string(
 
 # Nagios Check
   $item_list.each | $item | {
-    $command = "check_nrpe!check_http -a ${item[url]} ${item[string]} ${item[warn_limit_s]} ${item[crit_limit_s] ${item[timeout]}"
+    $command = "check_nrpe!check_http -a ${item[url]} ${item[string]} ${item[warn_limit_s]} ${item[crit_limit_s]} ${item[timeout]}"
 
     @@nagios_service {"Website_string ${item[string]} on ${item[url]} from ${::hostname}":
       check_command       => $command,
