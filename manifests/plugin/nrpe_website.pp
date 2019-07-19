@@ -34,9 +34,9 @@ class nagios::plugin::nrpe_website(
     @@nagios_service {"Check site response ${::hostname} ${item[url]}":
       check_command       => $command,
       service_description => "Response from ${item[url]}",
-      host_name           => $::fqdn,
       use                 => 'generic-service',
       tag                 => $nagios::tag,
+      require             => Class['nagios'],
     }
   }
 }
