@@ -13,6 +13,8 @@ class nagios::plugin::nrpe_swap (
     @@nagios_service { "check_swap_${::hostname}":
       service_description => 'Swap Usage',
       check_command       => 'check_nrpe!check_swap',
+      host_name           => $::fqdn,
+      notify              => Service['nagios'],
       tag                 => $nagios::tag,
     }
   }

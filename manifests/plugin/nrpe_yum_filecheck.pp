@@ -19,6 +19,7 @@ class nagios::plugin::nrpe_yum_filecheck {
     service_description => 'Yum Patching',
     use                 => 'generic-service',
     host_name           => $::fqdn,
+    notify              => Service['nagios'],
     tag                 => $nagios::tag,
   }
 }

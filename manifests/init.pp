@@ -7,11 +7,6 @@ class nagios (
   $tag            = $::environment,
 ) inherits nagios::params {
 
-  # Service Defaults
-  Nagios_service {
-    host_name => $::fqdn,
-  }
-
   if ($role == 'server') {
     include nagios::server
 

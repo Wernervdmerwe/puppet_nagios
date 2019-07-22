@@ -24,7 +24,8 @@ class nagios::plugin::nrpe_systemd_service(
       use                 => 'generic-service',
       service_description => 'Systemd service status',
       tag                 => $nagios::tag,
-      require             => Class['nagios'],
+      notify              => Service['nagios'],
+      host_name           => $::fqdn,
     }
   }
 }

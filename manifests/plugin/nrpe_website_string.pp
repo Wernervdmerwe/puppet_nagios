@@ -43,8 +43,9 @@ class nagios::plugin::nrpe_website_string(
       check_command       => $command,
       service_description => "Website_string ${item[string]} on ${item[url]}",
       use                 => 'generic-service',
+      host_name           => $::fqdn,
+      notify              => Service['nagios'],
       tag                 => $nagios::tag,
-      require             => Class['nagios'],
     }
   }
 }
