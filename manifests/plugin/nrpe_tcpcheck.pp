@@ -40,6 +40,8 @@ class nagios::plugin::nrpe_tcpcheck(
       check_command       => $command,
       service_description => "Response from ${item[url]}:${item[port]}",
       use                 => 'generic-service',
+      host_name           => $::fqdn,
+      notify              => Service['nagios'],
       tag                 => $nagios::tag,
     }
   }

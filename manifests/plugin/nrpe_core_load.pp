@@ -14,6 +14,8 @@ class nagios::plugin::nrpe_core_load (
   @@nagios_service { "check-load_${::hostname}":
     check_command       => 'check_nrpe!check_load',
     service_description => 'Current Load Per Core',
+    host_name           => $::fqdn,
+    notify              => Service['nagios'],
     tag                 => $nagios::tag,
   }
 }

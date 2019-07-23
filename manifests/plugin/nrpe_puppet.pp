@@ -21,6 +21,8 @@ class nagios::plugin::nrpe_puppet(
   @@nagios_service { "check-puppet_${::hostname}":
     check_command       => 'check_nrpe!check_puppetagent',
     service_description => 'Puppet',
+    host_name           => $::fqdn,
+    notify              => Service['nagios'],
     tag                 => $nagios::tag,
   }
 }

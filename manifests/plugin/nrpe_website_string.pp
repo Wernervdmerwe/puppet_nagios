@@ -32,7 +32,7 @@ class nagios::plugin::nrpe_website_string(
 # NRPE Command
   nrpe::command { 'check_http':
     ensure  => present,
-    command => 'check_http -H $ARG1$ -s $ARG2$ -w $ARG3$ -c "$ARG4$" -t "$ARG4$" -S';
+    command => 'check_http -H $ARG1$ -s $ARG2$ -w "$ARG3$" -c "$ARG4$" -t "$ARG5$" -S';
   }
 
 # Nagios Check
@@ -43,8 +43,9 @@ class nagios::plugin::nrpe_website_string(
       check_command       => $command,
       service_description => "Website_string ${item[string]} on ${item[url]}",
       use                 => 'generic-service',
+      host_name           => $::fqdn,
+      notify              => Service['nagios'],
       tag                 => $nagios::tag,
-      require             => Class['nagios'],
     }
   }
 }
