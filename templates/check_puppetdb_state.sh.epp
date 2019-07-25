@@ -41,8 +41,8 @@ elif [[ "$status" = "failed" ]]; then
     echo "Critical: Status is 'failed'."
     exitCode=2
 
-elif [[ "$corrective_change" = "true" ]]; then
-    if [[ "$is_noop" = "true" ]]; then
+elif [[ "$correctiveChange" = "true" ]]; then
+    if [[ "$isNoop" = "true" ]]; then
         echo "Warning: No-op corrective changes are pending."
     else
         echo "Warning: Corrective changes were made."
@@ -50,7 +50,7 @@ elif [[ "$corrective_change" = "true" ]]; then
 
     exitCode=1
 
-elif [[ "$is_noop" = "true" && "$noop_pending" = "true" ]]; then
+elif [[ "$isNoop" = "true" && "$noopPending" = "true" ]]; then
     echo "No-op intentional changes are pending."
     exitCode=1
 
