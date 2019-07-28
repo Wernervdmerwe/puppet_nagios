@@ -19,7 +19,7 @@ class nagios::export_resources {
     address    => $facts['ipaddress'],
     use        => 'linux-server',
     hostgroups => $hostgroups,
-    tag        => $nagios::tag
+    tag        => pick($nagios::tag, $::environment),
   }
 
   # Create exported resources for Nagios services

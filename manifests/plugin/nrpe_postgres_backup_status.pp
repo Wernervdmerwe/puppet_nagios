@@ -17,10 +17,10 @@ class nagios::plugin::nrpe_postgres_backup_status {
   @@nagios_service {"Check postgres backup status ${::hostname} ${::environment}":
     check_command       => 'check_nrpe!postgres_backup_status',
     service_description => "Postgres backup status on ${::hostname}",
-    use                 => 'generic-service',
     host_name           => $::fqdn,
     notify              => Service['nagios'],
-    tag                 => $nagios::tag,
+    tag                 => pick($nagios::tag, $::environment),
+    require             => Class['nagios'],
   }
 }
 

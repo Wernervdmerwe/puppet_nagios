@@ -6,6 +6,7 @@ class nagios::plugin::check_puppetdb_status {
     service_description => 'Puppet Agent - last run status',
     host_name           => $::fqdn,
     notify              => Service['nagios'],
-    tag                 => $nagios::tag,
+    tag                 => pick($nagios::tag, $::environment),
+    require             => Class['nagios'],
   }
 }
