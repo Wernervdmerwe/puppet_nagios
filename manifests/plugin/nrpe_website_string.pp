@@ -42,10 +42,10 @@ class nagios::plugin::nrpe_website_string(
     @@nagios_service {"Website_string ${item[string]} on ${item[url]} from ${::hostname}":
       check_command       => $command,
       service_description => "Website_string ${item[string]} on ${item[url]}",
-      use                 => 'generic-service',
       host_name           => $::fqdn,
       notify              => Service['nagios'],
-      tag                 => $nagios::tag,
+      tag                 => pick($nagios::tag, $::environment),
+      require             => Class['nagios'],
     }
   }
 }

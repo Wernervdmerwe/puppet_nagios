@@ -1,6 +1,6 @@
 # Export Nagios service for check_systemd_service
 class nagios::plugin::nrpe_systemd_service(
-  Array $service_list = ['ntpd', 'sshd'],
+  Array $service_list = [ 'ntpd', 'sshd' ],
 ){
 
 # NRPE Command
@@ -21,11 +21,11 @@ class nagios::plugin::nrpe_systemd_service(
 
     @@nagios_service { "check-systemd_service-${service} on ${::hostname}":
       check_command       => $command,
-      use                 => 'generic-service',
-      service_description => 'Systemd service status',
-      tag                 => $nagios::tag,
-      notify              => Service['nagios'],
+      service_description => "Systemd service ${service} status",
       host_name           => $::fqdn,
+      notify              => Service['nagios'],
+      tag                 => pick($nagios::tag, $::environment),
+      require             => Class['nagios'],
     }
   }
 }

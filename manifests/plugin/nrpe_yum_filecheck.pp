@@ -14,12 +14,12 @@ class nagios::plugin::nrpe_yum_filecheck {
   }
 
 # Nagios Check
-  @@nagios_service { "check-yum_file_${::hostname}":
-    check_command       => 'check_nrpe!check_yum_file',
+  @@nagios_service { "check yum file ${::hostname}":
     service_description => 'Yum Patching',
-    use                 => 'generic-service',
+    check_command       => 'check_nrpe!check_yum_file',
     host_name           => $::fqdn,
     notify              => Service['nagios'],
-    tag                 => $nagios::tag,
+    tag                 => pick($nagios::tag, $::environment),
+    require             => Class['nagios']
   }
 }

@@ -10,6 +10,7 @@ class nagios::plugin::check_ping (
     service_description => 'PING',
     host_name           => $::fqdn,
     notify              => Service['nagios'],
-    tag                 => $nagios::tag,
+    tag                 => pick($nagios::tag, $::environment),
+    require             => Class['nagios'],
   }
 }

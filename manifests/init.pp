@@ -4,7 +4,7 @@ class nagios (
   $role           = $nagios::params::role,
   $nagios_servers = lookup('nrpe::allowed_hosts', Array[String], 'first', undef),
   $notify_slack   = false,
-  $tag            = $::environment,
+  $tag            = 'development',
 ) inherits nagios::params {
 
   if ($role == 'server') {
