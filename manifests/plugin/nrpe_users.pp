@@ -2,7 +2,7 @@
 class nagios::plugin::nrpe_users (
   $warn                          = 5,
   $crit                          = 10,
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
 
 # NRPE Command
@@ -17,7 +17,7 @@ class nagios::plugin::nrpe_users (
     service_description   => 'Current Users',
     host_name             => $::fqdn,
     notify                => Service['nagios'],
-    tag                   => pick($nagios::tag, $::environment),
+    tag                   => $::environment,
     notification_interval => $notification_interval,
     require               => Class['nagios'],
   }

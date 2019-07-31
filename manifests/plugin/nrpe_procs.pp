@@ -2,7 +2,7 @@
 class nagios::plugin::nrpe_procs (
   $warn                          = 450,
   $crit                          = 600,
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
 
 # NRPE Command
@@ -17,7 +17,7 @@ class nagios::plugin::nrpe_procs (
     service_description   => 'Current Processes',
     host_name             => $::fqdn,
     notify                => Service['nagios'],
-    tag                   => pick($nagios::tag, $::environment),
+    tag                   => $::environment,
     notification_interval => $notification_interval,
     require               => Class['nagios'],
   }

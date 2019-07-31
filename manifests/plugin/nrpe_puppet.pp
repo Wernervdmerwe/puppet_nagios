@@ -2,7 +2,7 @@
 class nagios::plugin::nrpe_puppet(
   $warn                          = 3600,
   $crit                          = 9000,
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
 
 # NRPE Command
@@ -24,7 +24,7 @@ class nagios::plugin::nrpe_puppet(
     service_description   => 'Puppet',
     host_name             => $::fqdn,
     notify                => Service['nagios'],
-    tag                   => pick($nagios::tag, $::environment),
+    tag                   => $::environment,
     notification_interval => $notification_interval,
     require               => Class['nagios'],
   }

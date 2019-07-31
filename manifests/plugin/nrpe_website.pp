@@ -13,7 +13,7 @@
 
 class nagios::plugin::nrpe_website(
   $item_list                     = [{ url => 'http://google.com', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
 
   nrpe::plugin { 'check_website_response':
@@ -37,7 +37,7 @@ class nagios::plugin::nrpe_website(
       service_description   => "Response from ${item[url]}",
       host_name             => $::fqdn,
       notify                => Service['nagios'],
-      tag                   => pick($nagios::tag, $::environment),
+      tag                   => $::environment,
       notification_interval => $notification_interval,
       require               => Class['nagios'],
     }

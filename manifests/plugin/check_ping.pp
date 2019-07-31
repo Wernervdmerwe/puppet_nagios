@@ -2,7 +2,7 @@
 class nagios::plugin::check_ping (
   $warn                          = 20,
   $crit                          = 60,
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
 
 # Nagios Check
@@ -11,7 +11,7 @@ class nagios::plugin::check_ping (
     service_description   => 'PING',
     host_name             => $::fqdn,
     notify                => Service['nagios'],
-    tag                   => pick($nagios::tag, $::environment),
+    tag                   => $::environment,
     notification_interval => $notification_interval,
     require               => Class['nagios'],
   }

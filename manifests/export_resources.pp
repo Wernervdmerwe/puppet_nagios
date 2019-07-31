@@ -1,6 +1,6 @@
 # Export file, host and service resources for Nagios clients
 class nagios::export_resources (
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
   # Set hostgroups for host definition
   $nagios_hg = hiera(nagios_hostgroup,undef)

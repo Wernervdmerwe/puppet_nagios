@@ -2,7 +2,7 @@
 class nagios::plugin::nrpe_zombies (
   $warn                          = 5,
   $crit                          = 10,
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
 
 # NRPE Command
@@ -17,7 +17,7 @@ class nagios::plugin::nrpe_zombies (
     service_description   => 'Zombie Processes',
     host_name             => $::fqdn,
     notify                => Service['nagios'],
-    tag                   => $nagios::tag,
+    tag                   => $::environment,
     notification_interval => $notification_interval,
   }
 }

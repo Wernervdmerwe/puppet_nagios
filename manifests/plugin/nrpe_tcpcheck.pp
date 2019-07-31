@@ -24,7 +24,7 @@
 #################################################################################################
 class nagios::plugin::nrpe_tcpcheck(
   $item_list                     = [{ url => 'google.com', port => '443', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
-  Integer $notification_interval = $nagios::params::notification_interval
+  Integer $notification_interval = lookup('nagios::notification_interval')
 ){
 
   # NRPE Command
@@ -42,7 +42,7 @@ class nagios::plugin::nrpe_tcpcheck(
       service_description   => "Response from ${item[url]}:${item[port]}",
       host_name             => $::fqdn,
       notify                => Service['nagios'],
-      tag                   => pick($nagios::tag, $::environment),
+      tag                   => $::environment,
       notification_interval => $notification_interval,
       require               => Class['nagios'],
     }
