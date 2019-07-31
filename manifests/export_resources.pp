@@ -1,5 +1,7 @@
 # Export file, host and service resources for Nagios clients
-class nagios::export_resources {
+class nagios::export_resources (
+  Integer $notification_interval = $nagios::params::notification_interval
+){
   # Set hostgroups for host definition
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
@@ -14,12 +16,13 @@ class nagios::export_resources {
 
   # Create exported resources for Nagios hosts
   @@nagios_host { $trusted['certname']:
-    ensure     => present,
-    alias      => $trusted['hostname'],
-    address    => $facts['ipaddress'],
-    use        => 'linux-server',
-    hostgroups => $hostgroups,
-    tag        => pick($nagios::tag, $::environment),
+    ensure                => present,
+    alias                 => $trusted['hostname'],
+    address               => $facts['ipaddress'],
+    use                   => 'linux-server',
+    hostgroups            => $hostgroups,
+    tag                   => pick($nagios::tag, $::environment),
+    notification_interval => $notification_interval,
   }
 
   # Create exported resources for Nagios services

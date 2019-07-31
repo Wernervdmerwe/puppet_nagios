@@ -1,7 +1,8 @@
 # Export Nagios service for check_puppetagent
 class nagios::plugin::nrpe_puppet(
-  $warn = 3600,
-  $crit = 9000
+  $warn                          = 3600,
+  $crit                          = 9000,
+  Integer $notification_interval = $nagios::params::notification_interval
 ){
 
 # NRPE Command
@@ -19,11 +20,12 @@ class nagios::plugin::nrpe_puppet(
 
 # Nagios Check
   @@nagios_service { "check-puppet_${::hostname}":
-    check_command       => 'check_nrpe!check_puppetagent',
-    service_description => 'Puppet',
-    host_name           => $::fqdn,
-    notify              => Service['nagios'],
-    tag                 => pick($nagios::tag, $::environment),
-    require             => Class['nagios'],
+    check_command         => 'check_nrpe!check_puppetagent',
+    service_description   => 'Puppet',
+    host_name             => $::fqdn,
+    notify                => Service['nagios'],
+    tag                   => pick($nagios::tag, $::environment),
+    notification_interval => $notification_interval,
+    require               => Class['nagios'],
   }
 }

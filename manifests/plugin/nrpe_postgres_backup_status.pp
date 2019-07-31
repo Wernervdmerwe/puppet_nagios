@@ -1,5 +1,7 @@
 # Export Nagios service to check Postgres backup status
-class nagios::plugin::nrpe_postgres_backup_status {
+class nagios::plugin::nrpe_postgres_backup_status (
+  Integer $notification_interval = $nagios::params::notification_interval
+){
 
   nrpe::plugin { 'check_postgres_backup.sh':
       ensure => present,
@@ -15,12 +17,13 @@ class nagios::plugin::nrpe_postgres_backup_status {
 
 # Nagios Check
   @@nagios_service {"Check postgres backup status ${::hostname} ${::environment}":
-    check_command       => 'check_nrpe!postgres_backup_status',
-    service_description => "Postgres backup status on ${::hostname}",
-    host_name           => $::fqdn,
-    notify              => Service['nagios'],
-    tag                 => pick($nagios::tag, $::environment),
-    require             => Class['nagios'],
+    check_command         => 'check_nrpe!postgres_backup_status',
+    service_description   => "Postgres backup status on ${::hostname}",
+    host_name             => $::fqdn,
+    notify                => Service['nagios'],
+    tag                   => pick($nagios::tag, $::environment),
+    notification_interval => $notification_interval,
+    require               => Class['nagios'],
   }
 }
 

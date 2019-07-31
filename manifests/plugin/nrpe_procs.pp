@@ -1,7 +1,8 @@
 # Export Nagios service for check_procs
 class nagios::plugin::nrpe_procs (
-  $warn = 450,
-  $crit = 600
+  $warn                          = 450,
+  $crit                          = 600,
+  Integer $notification_interval = $nagios::params::notification_interval
 ){
 
 # NRPE Command
@@ -12,11 +13,12 @@ class nagios::plugin::nrpe_procs (
 
 # Nagios Check
   @@nagios_service { "check-procs_${::hostname}":
-    check_command       => 'check_nrpe!check_procs_total',
-    service_description => 'Current Processes',
-    host_name           => $::fqdn,
-    notify              => Service['nagios'],
-    tag                 => pick($nagios::tag, $::environment),
-    require             => Class['nagios'],
+    check_command         => 'check_nrpe!check_procs_total',
+    service_description   => 'Current Processes',
+    host_name             => $::fqdn,
+    notify                => Service['nagios'],
+    tag                   => pick($nagios::tag, $::environment),
+    notification_interval => $notification_interval,
+    require               => Class['nagios'],
   }
 }

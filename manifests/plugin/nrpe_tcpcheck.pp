@@ -23,7 +23,8 @@
 # To be able to pass arguments to NRPE you need to modify nrpe.cfg setting 'dont_blame_nrpe=1'
 #################################################################################################
 class nagios::plugin::nrpe_tcpcheck(
-  $item_list = [{ url => 'google.com', port => '443', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
+  $item_list                     = [{ url => 'google.com', port => '443', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
+  Integer $notification_interval = $nagios::params::notification_interval
 ){
 
   # NRPE Command
@@ -37,12 +38,13 @@ class nagios::plugin::nrpe_tcpcheck(
     $command = "check_nrpe!check_tcp-port_response -a ${item[url]} ${item[port]} ${item[warn_limit_ms]} ${item[crit_limit_ms]}"
 
     @@nagios_service {"Check ${item[url]}:${item[port]} from ${::hostname}":
-      check_command       => $command,
-      service_description => "Response from ${item[url]}:${item[port]}",
-      host_name           => $::fqdn,
-      notify              => Service['nagios'],
-      tag                 => pick($nagios::tag, $::environment),
-      require             => Class['nagios'],
+      check_command         => $command,
+      service_description   => "Response from ${item[url]}:${item[port]}",
+      host_name             => $::fqdn,
+      notify                => Service['nagios'],
+      tag                   => pick($nagios::tag, $::environment),
+      notification_interval => $notification_interval,
+      require               => Class['nagios'],
     }
   }
 }

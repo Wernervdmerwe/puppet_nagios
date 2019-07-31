@@ -18,14 +18,15 @@
 #################################################################################################
 
 class nagios::plugin::nrpe_website_string(
-  $item_list = [
-    { url          => 'google.com',
-      string       => 'google',
-      warn_limit_s => '3',
-      crit_limit_s => '5',
-      timeout      => '10'
-    },
-  ],
+  Integer $notification_interval = $nagios::params::notification_interval,
+  $item_list                     = [
+                                    { url          => 'google.com',
+                                      string       => 'google',
+                                      warn_limit_s => '3',
+                                      crit_limit_s => '5',
+                                      timeout      => '10'
+                                    },
+                                  ],
 ){
 
 

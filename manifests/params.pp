@@ -19,4 +19,5 @@ class nagios::params{
   $service_config        = '/etc/nagios/nagios_service.cfg'
   $contact_config        = '/etc/nagios/nagios_contact.cfg'
   $contactgroup_config   = '/etc/nagios/nagios_contactgroup.cfg'
+  $notification_interval = 30
 }
