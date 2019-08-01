@@ -18,14 +18,15 @@
 #################################################################################################
 
 class nagios::plugin::nrpe_website_string(
-  $item_list = [
-    { url          => 'google.com',
-      string       => 'google',
-      warn_limit_s => '3',
-      crit_limit_s => '5',
-      timeout      => '10'
-    },
-  ],
+  Integer $notification_interval = lookup('nagios::notification_interval'),
+  $item_list                     = [
+                                    { url          => 'google.com',
+                                      string       => 'google',
+                                      warn_limit_s => '3',
+                                      crit_limit_s => '5',
+                                      timeout      => '10'
+                                    },
+                                  ],
 ){
 
 
@@ -40,12 +41,13 @@ class nagios::plugin::nrpe_website_string(
     $command = "check_nrpe!check_http -a ${item[url]} ${item[string]} ${item[warn_limit_s]} ${item[crit_limit_s]} ${item[timeout]}"
 
     @@nagios_service {"Website_string ${item[string]} on ${item[url]} from ${::hostname}":
-      check_command       => $command,
-      service_description => "Website_string ${item[string]} on ${item[url]}",
-      host_name           => $::fqdn,
-      notify              => Service['nagios'],
-      tag                 => pick($nagios::tag, $::environment),
-      require             => Class['nagios'],
+      check_command         => $command,
+      service_description   => "Website_string ${item[string]} on ${item[url]}",
+      host_name             => $::fqdn,
+      notify                => Service['nagios'],
+      tag                   => $::environment,
+      notification_interval => $notification_interval,
+      require               => Class['nagios'],
     }
   }
 }
