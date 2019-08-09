@@ -12,33 +12,33 @@
 #     crit_limit_s: '3'
 #     timeout: '10'
 #
-# By default check connects via SSL!
+# By default check connects via SSL and follows redirects.
 #
 # To be able to pass arguments to NRPE you need to modify nrpe.cfg setting 'dont_blame_nrpe=1'
 #################################################################################################
 
 class nagios::plugin::nrpe_website_string(
-  Integer $notification_interval = lookup('nagios::notification_interval'),
-  $item_list                     = [
-                                    { url          => 'google.com',
-                                      string       => 'google',
-                                      warn_limit_s => '3',
-                                      crit_limit_s => '5',
-                                      timeout      => '10'
-                                    },
-                                  ],
+  $item_list = [
+    { url          => 'google.com',
+      string       => 'google',
+      warn_limit_s => '3',
+      crit_limit_s => '5',
+      timeout      => '10',
+      onredirect   => 'follow',
+    },
+  ],
 ){
 
 
 # NRPE Command
   nrpe::command { 'check_http':
     ensure  => present,
-    command => 'check_http -H $ARG1$ -s $ARG2$ -w "$ARG3$" -c "$ARG4$" -t "$ARG5$" -S';
+    command => 'check_http -H $ARG1$ -s $ARG2$ -w "$ARG3$" -c "$ARG4$" -t "$ARG5$" -f "$ARG6$" -S';
   }
 
 # Nagios Check
   $item_list.each | $item | {
-    $command = "check_nrpe!check_http -a ${item[url]} ${item[string]} ${item[warn_limit_s]} ${item[crit_limit_s]} ${item[timeout]}"
+    $command = "check_nrpe!check_http -a ${item[url]} ${item[string]} ${item[warn_limit_s]} ${item[crit_limit_s]} ${item[onredirect]} ${item[timeout]}"
 
     @@nagios_service {"Website_string ${item[string]} on ${item[url]} from ${::hostname}":
       check_command         => $command,
