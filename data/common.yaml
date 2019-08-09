@@ -1,0 +1,4 @@
+---
+# Nagios defaults
+nagios::notification_interval: 240 
+nagios::tag: "%{::environment}"
