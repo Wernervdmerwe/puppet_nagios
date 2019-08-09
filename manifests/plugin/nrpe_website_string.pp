@@ -18,6 +18,7 @@
 #################################################################################################
 
 class nagios::plugin::nrpe_website_string(
+  Integer $notification_interval = lookup('nagios::notification_interval'),
   $item_list = [
     { url          => 'google.com',
       string       => 'google',
@@ -38,7 +39,7 @@ class nagios::plugin::nrpe_website_string(
 
 # Nagios Check
   $item_list.each | $item | {
-    $command = "check_nrpe!check_http -a ${item[url]} ${item[string]} ${item[warn_limit_s]} ${item[crit_limit_s]} ${item[onredirect]} ${item[timeout]}"
+    $command = "check_nrpe!check_http -a ${item[url]} ${item[string]} ${item[warn_limit_s]} ${item[crit_limit_s]} ${item[timeout]} ${item[onredirect]}"
 
     @@nagios_service {"Website_string ${item[string]} on ${item[url]} from ${::hostname}":
       check_command         => $command,
