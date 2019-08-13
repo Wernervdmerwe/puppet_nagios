@@ -139,6 +139,7 @@ class nagios::server (
 
   service { 'nagios':
     ensure  => 'running',
+    enable  => true,
     require => Package[nagios],
   }
 
