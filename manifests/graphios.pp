@@ -35,7 +35,7 @@ class nagios::graphios (
   file { '/etc/graphios/graphios.cfg':
     ensure  => 'file',
     content => epp('nagios/graphios.cfg.epp', {graphite_host => $graphite_host }),
-    notify  => Service['graphios'],
+    notify  => Package['graphios'],
   }
 
   # Graphios doesn't provide a systemd service file so we need to create one
@@ -46,8 +46,5 @@ class nagios::graphios (
     require => Package['pip','graphios']
   }
 
-  service { 'graphios':
-    ensure  => running,
-    require => Systemd::Unit_file['graphios.service']
-  }
+  ->service { 'graphios': ensure  => running, }
 }
