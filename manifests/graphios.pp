@@ -40,13 +40,14 @@ class nagios::graphios (
 
   # Graphios doesn't provide a systemd service file so we need to create one
   systemd::unit_file { 'graphios.service':
-    source => 'puppet:///modules/nagios/graphios.service',
-    enable => true,
-    active => true,
+    source  => 'puppet:///modules/nagios/graphios.service',
+    enable  => true,
+    active  => true,
+    require => Package['pip','graphios']
   }
 
   service { 'graphios':
     ensure  => running,
-    require => Package[graphios]
+    require => Systemd::Unit_file['graphios.service']
   }
 }
