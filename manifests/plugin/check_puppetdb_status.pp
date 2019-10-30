@@ -6,9 +6,9 @@ class nagios::plugin::check_puppetdb_status (
   @@nagios_service { "check_puppetdb_status_${facts['hostname'].downcase}":
     check_command         => 'check_puppetdb_status',
     service_description   => 'Puppet Agent - last run status',
-    host_name             => $::fqdn,
+    host_name             => $trusted['certname'],
     notify                => Service['nagios'],
-    tag                   => $::environment,
+    tag                   => $nagios::tag,
     notification_interval => $notification_interval,
     require               => Class['nagios'],
   }
