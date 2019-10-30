@@ -5,6 +5,8 @@ class nagios::plugin::nrpe_swap (
   $crit                          = 10,
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
   nrpe::command { 'check_swap':
     ensure  => $ensure,
     command => "check_swap -w ${warn} -c ${crit}";

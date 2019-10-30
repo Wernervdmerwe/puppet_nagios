@@ -818,8 +818,8 @@ process_performance_data=1
 
 #host_perfdata_file=/var/log/nagios/host-perfdata
 #service_perfdata_file=/var/log/nagios/service-perfdata
-host_perfdata_file=<%= $nagios::server::perfdata_dir %>/host-perfdata
-service_perfdata_file=<%= $nagios::server::perfdata_dir %>/service-perfdata
+host_perfdata_file=<%= $nagios::graphios::perfdata_dir %>/host-perfdata
+service_perfdata_file=<%= $nagios::graphios::perfdata_dir %>/service-perfdata
 
 
 

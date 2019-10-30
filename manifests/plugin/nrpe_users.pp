@@ -4,6 +4,8 @@ class nagios::plugin::nrpe_users (
   $crit                          = 10,
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
 # NRPE Command
   nrpe::command { 'check_users':

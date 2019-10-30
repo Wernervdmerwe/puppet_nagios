@@ -4,14 +4,16 @@ class nagios::plugin::nrpe_core_load (
   $crit                          = 5,
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
-# NRPE Command
+  # NRPE Command
   nrpe::command { 'check_load':
     ensure  => present,
     command => "check_load -r -w ${warn} -c ${crit}";
   }
 
-# Nagios Check
+  # Nagios Check
   @@nagios_service { "check-load_${::hostname}":
     check_command         => 'check_nrpe!check_load',
     service_description   => 'Current Load Per Core',

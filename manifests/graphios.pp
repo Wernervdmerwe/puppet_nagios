@@ -1,6 +1,7 @@
 # Install and configure graphios
 class nagios::graphios (
-  $graphite_host = $nagios::params::graphite_host
+  String $graphite_host,
+  String $perfdata_dir
 ){
 
   package { ['python-pip','redhat-lsb-core']: ensure => 'installed', }
@@ -10,25 +11,25 @@ class nagios::graphios (
     provider => 'pip',
   }
 
-  file { $nagios::server::perfdata_dir:
+  file { $perfdata_dir:
     ensure => 'directory',
     owner  => 'nagios',
   }
 
-  file { ["${nagios::server::perfdata_dir}/service-perfdata","${nagios::server::perfdata_dir}/host-perfdata"]:
+  file { ["${perfdata_dir}/service-perfdata","${perfdata_dir}/host-perfdata"]:
     ensure => 'file',
     owner  => 'nagios',
   }
 
   nagios_command { 'graphite_perf_host':
     ensure       => 'present',
-    command_line => "/bin/mv ${nagios::server::perfdata_dir}/host-perfdata ${nagios::server::perfdata_dir}/host-perfdata.\$TIMET\$",
+    command_line => "/bin/mv ${perfdata_dir}/host-perfdata ${perfdata_dir}/host-perfdata.\$TIMET\$",
     notify       => Service['nagios'],
   }
 
   nagios_command { 'graphite_perf_service':
     ensure       => 'present',
-    command_line => "/bin/mv ${nagios::server::perfdata_dir}/service-perfdata ${nagios::server::perfdata_dir}/service-perfdata.\$TIMET\$",
+    command_line => "/bin/mv ${perfdata_dir}/service-perfdata ${perfdata_dir}/service-perfdata.\$TIMET\$",
     notify       => Service['nagios'],
   }
 

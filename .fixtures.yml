@@ -1,0 +1,12 @@
+# This file can be used to install module dependencies for unit testing
+# See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
+---
+fixtures:
+  forge_modules:
+    stdlib: "puppetlabs/stdlib"
+    nrpe: "pdxcat/nrpe"
+    systemd: "camptocamp/systemd"
+  repositories:
+    nagios_core:
+      repo: "https://github.com/puppetlabs/puppetlabs-nagios_core"
+      ref: "1.0.3"

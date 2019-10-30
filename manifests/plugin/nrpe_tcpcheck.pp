@@ -26,6 +26,8 @@ class nagios::plugin::nrpe_tcpcheck(
   $item_list                     = [{ url => 'google.com', port => '443', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
   # NRPE Command
   nrpe::command { 'check_tcp-port_response':

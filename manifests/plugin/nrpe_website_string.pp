@@ -29,6 +29,8 @@ class nagios::plugin::nrpe_website_string(
     },
   ],
 ){
+  # Configure nrpe directories first
+  include nrpe
 
 
 # NRPE Command
