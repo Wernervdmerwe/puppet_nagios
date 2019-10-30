@@ -2,6 +2,8 @@
 class nagios::plugin::nrpe_yum_filecheck (
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
 # NRPE Command
   nrpe::plugin { 'check_yum_file.sh':

@@ -3,6 +3,8 @@ class nagios::plugin::nrpe_systemd_service(
   Array $service_list            = [ 'ntpd', 'sshd' ],
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
 # NRPE Command
   nrpe::plugin { 'check_systemd_service':

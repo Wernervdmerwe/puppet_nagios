@@ -4,6 +4,8 @@ class nagios::plugin::nrpe_puppet(
   $crit                          = 9000,
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
 # NRPE Command
   nrpe::plugin { 'check_puppetagent':

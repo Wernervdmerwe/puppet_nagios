@@ -4,6 +4,8 @@ class nagios::plugin::nrpe_procs (
   $crit                          = 600,
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
 # NRPE Command
   nrpe::command { 'check_procs_total':

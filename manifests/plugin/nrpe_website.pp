@@ -15,6 +15,8 @@ class nagios::plugin::nrpe_website(
   $item_list                     = [{ url => 'http://google.com', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
   nrpe::plugin { 'check_website_response':
       ensure => present,

@@ -5,6 +5,9 @@ class nagios::plugin::nrpe_memory(
   $crit                          = 95,
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
+
   nrpe::plugin { 'check_memory':
       ensure => present,
       source => 'puppet:///modules/nagios/check_memory',

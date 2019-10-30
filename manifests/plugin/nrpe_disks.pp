@@ -7,14 +7,16 @@ class nagios::plugin::nrpe_disks (
   # lint:endignore
   Integer $notification_interval = lookup('nagios::notification_interval')
 ){
+  # Configure nrpe directories first
+  include nrpe
 
-# NRPE Command
+  # NRPE Command
   nrpe::command { 'check_disks':
     ensure  => present,
     command => $check_disks_command;
   }
 
-# Nagios Check
+  # Nagios Check
   @@nagios_service { "check-disks_${::hostname}":
     check_command         => 'check_nrpe!check_disks',
     service_description   => 'Free Space',
