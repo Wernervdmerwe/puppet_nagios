@@ -44,7 +44,7 @@ class nagios::graphios (
     source  => 'puppet:///modules/nagios/graphios.service',
     enable  => true,
     active  => true,
-    require => Package['pip','graphios']
+    require => Package['python-pip','graphios']
   }
 
   ->service { 'graphios': ensure  => running, }
