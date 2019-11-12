@@ -6,11 +6,12 @@ class nagios::export_resources (
   # Set hostgroups for host definition
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
+  $default_hostgroups = "${facts['kernel']},${facts['agent_specified_environment']},${facts['netzone']},${facts['domain']},${facts['app']}"
+
   if $nagios_hg {
-    $hostgroups = "${::kernel}, ${nagios_hg}"
-  }
-  else {
-    $hostgroups = $::kernel
+    $hostgroups = "${default_hostgroups},${nagios_hg.join(',')}"
+  } else {
+    $hostgroups = $default_hostgroups
   }
 
   # TODO: check if we need a different host template for windows servers
