@@ -1,12 +1,11 @@
 # Export file, host and service resources for Nagios clients
 class nagios::export_resources (
   Integer $notification_interval = lookup('nagios::notification_interval'),
-  String $tag = lookup('nagios::tag')
+  String $tag = lookup('nagios::tag'),
+  String $default_hostgroups = "${facts['kernel']},${facts['agent_specified_environment']},${facts['netzone']},${facts['domain']},${facts['app']}"
 ){
   # Set hostgroups for host definition
   $nagios_hg = hiera(nagios_hostgroup,undef)
-
-  $default_hostgroups = "${facts['kernel']},${facts['agent_specified_environment']},${facts['netzone']},${facts['domain']},${facts['app']}"
 
   if $nagios_hg {
     $hostgroups = "${default_hostgroups},${nagios_hg.join(',')}"
