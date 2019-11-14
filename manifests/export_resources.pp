@@ -8,7 +8,7 @@ class nagios::export_resources (
   $nagios_hg = hiera(nagios_hostgroup,undef)
 
   if $nagios_hg {
-    $hostgroups = "${default_hostgroups},${nagios_hg.join(',')}"
+    $hostgroups = "${default_hostgroups},${nagios_hg}"
   } else {
     $hostgroups = $default_hostgroups
   }
