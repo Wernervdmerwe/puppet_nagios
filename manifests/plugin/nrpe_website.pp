@@ -13,7 +13,8 @@
 
 class nagios::plugin::nrpe_website(
   $item_list                     = [{ url => 'http://google.com', warn_limit_ms => '2000', crit_limit_ms => '5000' },],
-  Integer $notification_interval = lookup('nagios::notification_interval')
+  Integer $notification_interval = lookup('nagios::notification_interval'),
+  String $notification_period    = lookup('nagios::notification_period')
 ){
   # Configure nrpe directories first
   include nrpe
@@ -41,6 +42,7 @@ class nagios::plugin::nrpe_website(
       notify                => Service['nagios'],
       tag                   => $::environment,
       notification_interval => $notification_interval,
+      notification_period   => $notification_period,
       require               => Class['nagios'],
     }
   }

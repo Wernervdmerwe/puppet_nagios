@@ -1,6 +1,7 @@
 # Gather the exported resources from Nagios clients and create Nagios hosts and services
 class nagios::collect_checks (
-  Array $environments = [ $::environment ]
+  Array $environments         = [ $::environment ],
+  String $notification_period = lookup('nagios::notification_period')
 ){
 
   # Set defaults for Nagios_host
@@ -17,7 +18,7 @@ class nagios::collect_checks (
     max_check_attempts  => 3,
     ensure              => 'present',
     use                 => 'generic-service',
-    notification_period => '24x7',
+    notification_period => $notification_period,
     require             => "Nagios_host[${trusted['certname']}]"
   }
 

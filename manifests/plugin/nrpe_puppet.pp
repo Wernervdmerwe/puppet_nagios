@@ -2,7 +2,8 @@
 class nagios::plugin::nrpe_puppet(
   $warn                          = 3600,
   $crit                          = 9000,
-  Integer $notification_interval = lookup('nagios::notification_interval')
+  Integer $notification_interval = lookup('nagios::notification_interval'),
+  String $notification_period    = lookup('nagios::notification_period')
 ){
   # Configure nrpe directories first
   include nrpe
@@ -28,6 +29,7 @@ class nagios::plugin::nrpe_puppet(
     notify                => Service['nagios'],
     tag                   => $::environment,
     notification_interval => $notification_interval,
+    notification_period   => $notification_period,
     require               => Class['nagios'],
   }
 }

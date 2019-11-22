@@ -1,6 +1,7 @@
 # Export Nagios service for check_ssh
 class nagios::plugin::check_ssh (
-  Integer $notification_interval = lookup('nagios::notification_interval')
+  Integer $notification_interval = lookup('nagios::notification_interval'),
+  String $notification_period    = lookup('nagios::notification_period')
 ){
 
 # Nagios Check
@@ -11,6 +12,7 @@ class nagios::plugin::check_ssh (
       service_description   => 'SSH',
       tag                   => $::environment,
       notification_interval => $notification_interval,
+      notification_period   => $notification_period,
       require               => Class['nagios'],
   }
 }

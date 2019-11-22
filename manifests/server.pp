@@ -14,6 +14,7 @@ class nagios::server (
   String $service_config         = $nagios::params::service_config,
   String $contact_config         = $nagios::params::contact_config,
   String $contactgroup_config    = $nagios::params::contactgroup_config,
+  String $timeperiod_config      = $nagios::params::timeperiod_config,
   Hash $nagios_extra_hosts       = {}
 ){
 
@@ -95,6 +96,12 @@ class nagios::server (
       ensure => 'file',
       mode   => '0664',
     }
+  }
+
+  file { $timeperiod_config:
+    ensure => 'file',
+    mode   => '0664',
+    source => 'puppet:///modules/nagios/nagios_timeperiods.cfg',
   }
 
   # Set defaults for Nagios_contact
