@@ -1,7 +1,8 @@
 # Export Nagios service for check_systemd_service
 class nagios::plugin::nrpe_systemd_service(
   Array $service_list            = [ 'ntpd', 'sshd' ],
-  Integer $notification_interval = lookup('nagios::notification_interval')
+  Integer $notification_interval = lookup('nagios::notification_interval'),
+  String $notification_period    = lookup('nagios::notification_period')
 ){
   # Configure nrpe directories first
   include nrpe
@@ -29,6 +30,7 @@ class nagios::plugin::nrpe_systemd_service(
       notify                => Service['nagios'],
       tag                   => $::environment,
       notification_interval => $notification_interval,
+      notification_period   => $notification_period,
       require               => Class['nagios'],
     }
   }

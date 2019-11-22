@@ -1,6 +1,7 @@
 ---
 # Nagios defaults
-nagios::notification_interval: 240 
+nagios::notification_interval: 240
+nagios::notification_period: '24x7'
 nagios::tag: "%{::environment}"
 nagios::graphios::graphite_host: '127.0.0.1'
 nagios::graphios::perfdata_dir: '/var/spool/nagios/graphios'

@@ -19,6 +19,7 @@
 
 class nagios::plugin::nrpe_website_string(
   Integer $notification_interval = lookup('nagios::notification_interval'),
+  String $notification_period    = lookup('nagios::notification_period'),
   $item_list = [
     { url          => 'google.com',
       string       => 'google',
@@ -50,6 +51,7 @@ class nagios::plugin::nrpe_website_string(
       notify                => Service['nagios'],
       tag                   => $::environment,
       notification_interval => $notification_interval,
+      notification_period   => $notification_period,
       require               => Class['nagios'],
     }
   }
