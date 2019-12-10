@@ -791,11 +791,10 @@ enable_event_handlers=1
 # performance data.
 # Values: 1 = process performance data, 0 = do not process performance data
 
-<% if $nagios::server::graphios_install == false { -%>
+<% unless $nagios::server::graphios_install { -%>
 process_performance_data=0
 <% } else { -%>
 process_performance_data=1
-
 
 
 # HOST AND SERVICE PERFORMANCE DATA PROCESSING COMMANDS
@@ -818,8 +817,8 @@ process_performance_data=1
 
 #host_perfdata_file=/var/log/nagios/host-perfdata
 #service_perfdata_file=/var/log/nagios/service-perfdata
-host_perfdata_file=<%= $nagios::graphios::perfdata_dir %>/host-perfdata
-service_perfdata_file=<%= $nagios::graphios::perfdata_dir %>/service-perfdata
+host_perfdata_file=<%= $nagios::server::graphios_perfdata_dir %>/host-perfdata
+service_perfdata_file=<%= $nagios::server::graphios_perfdata_dir %>/service-perfdata
 
 
 

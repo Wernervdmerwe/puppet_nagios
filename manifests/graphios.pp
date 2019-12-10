@@ -11,7 +11,7 @@ class nagios::graphios (
     provider => 'pip',
   }
 
-  file { $perfdata_dir:
+  file { [$perfdata_dir, '/etc/graphios']:
     ensure => 'directory',
     owner  => 'nagios',
   }
@@ -36,6 +36,7 @@ class nagios::graphios (
   file { '/etc/graphios/graphios.cfg':
     ensure  => 'file',
     content => epp('nagios/graphios.cfg.epp', {graphite_host => $graphite_host }),
+    require => File['/etc/graphios'],
     notify  => Package['graphios'],
   }
 

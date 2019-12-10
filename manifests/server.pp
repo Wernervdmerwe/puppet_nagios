@@ -15,6 +15,7 @@ class nagios::server (
   String $contact_config         = $nagios::params::contact_config,
   String $contactgroup_config    = $nagios::params::contactgroup_config,
   String $timeperiod_config      = $nagios::params::timeperiod_config,
+  String $graphios_perfdata_dir  = lookup('nagios::graphios::perfdata_dir'),
   Hash $nagios_extra_hosts       = {}
 ){
 
@@ -169,7 +170,7 @@ class nagios::server (
   include nagios::collect_checks
 
   # Configure Puppet node state checks
-  if $puppetdb_check_enable == true {
+  if $puppetdb_check_enable {
     include nagios::puppetdb
   }
 
