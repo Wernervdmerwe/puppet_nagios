@@ -11,7 +11,7 @@ class nagios::graphios (
     provider => 'pip',
   }
 
-  file { $perfdata_dir:
+  file { [$perfdata_dir, '/etc/graphios']:
     ensure => 'directory',
     owner  => 'nagios',
   }
