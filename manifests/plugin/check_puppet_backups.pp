@@ -1,5 +1,5 @@
-# Export Nagios service to check yum patching state
-class nagios::plugin::nrpe_yum_filecheck (
+# Nagios check for the puppetmaster backups
+class nagios::plugin::check_puppet_backups (
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period')
 ){
@@ -8,16 +8,16 @@ class nagios::plugin::nrpe_yum_filecheck (
 
 # NRPE Command
 
-  nrpe::command { 'check_yum_file':
+  nrpe::command { 'check_pe_backups_file':
     ensure  => present,
-    command => 'check_file.sh /tmp/patching_state.tmp',
+    command => 'check_file.sh /tmp/puppetmaster_backup.txt',
   }
 
 
 # Nagios Check
-  @@nagios_service { "check yum file ${::hostname}":
-    service_description   => 'Yum Patching',
-    check_command         => 'check_nrpe!check_yum_file',
+  @@nagios_service { "check pe backups file ${::hostname}":
+    service_description   => 'PE Backups',
+    check_command         => 'check_nrpe!check_pe_backups_file',
     host_name             => $::fqdn,
     notify                => Service['nagios'],
     tag                   => $::environment,
