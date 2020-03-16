@@ -1,6 +1,6 @@
 # Export Nagios service for check_procs
 class nagios::plugin::nrpe_procs (
-  $warn                          = 450,
+  $warn                          = 500,
   $crit                          = 600,
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period')

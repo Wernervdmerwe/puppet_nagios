@@ -1,7 +1,7 @@
 # Export Nagios service for check_ping
 class nagios::plugin::check_ping (
-  $warn                          = 20,
-  $crit                          = 60,
+  $warn                          = 30,
+  $crit                          = 90,
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period')
 ){

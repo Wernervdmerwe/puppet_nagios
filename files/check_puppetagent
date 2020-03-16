@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/python
 
 # NRPE plugin to check if Puppet agent works properly.
 # Extracts the age from last_run_summary.yaml and also verifies
