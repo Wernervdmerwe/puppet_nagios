@@ -18,4 +18,5 @@ class nagios::params{
   $contact_config        = '/etc/nagios/nagios_contact.cfg'
   $contactgroup_config   = '/etc/nagios/nagios_contactgroup.cfg'
   $timeperiod_config     = '/etc/nagios/nagios_timeperiods.cfg'
+  $nrpe_timeout_seconds  = 30
 }

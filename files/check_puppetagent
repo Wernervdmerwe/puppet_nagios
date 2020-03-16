@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/python
 
 # NRPE plugin to check if Puppet agent works properly.
 # Extracts the age from last_run_summary.yaml and also verifies
@@ -113,11 +113,11 @@ def main():
     yaml_map = getyamlfile(summary)
 
     if yaml_map["resources"]["failed"] > 0:
-	critical('Puppet status file lists %d failed resource(s)' % yaml_map["resources"]["failed"])
+        critical('Puppet status file lists %d failed resource(s)' % yaml_map["resources"]["failed"])
  
     if yaml_map["resources"]["out_of_sync"] > 0:
-	critical('Puppet status file lists %d out of sync resource(s)' % yaml_map["resources"]["out_of_sync"])
-	
+        critical('Puppet status file lists %d out of sync resource(s)' % yaml_map["resources"]["out_of_sync"])
+    
     # Check last_run time on summary file
     now = datetime.datetime.now()
     lastruntime = datetime.datetime.fromtimestamp(int(yaml_map["time"]["last_run"]))

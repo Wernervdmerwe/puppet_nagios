@@ -10,7 +10,7 @@ class nagios (
   if ($role == 'server') {
     include nagios::server
 
-    if ( $notify_slack ) { include nagios::slack }
+    if ($notify_slack) { include nagios::slack }
   }
 
   # Configure NRPE agent

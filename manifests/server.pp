@@ -15,6 +15,7 @@ class nagios::server (
   String $contact_config         = $nagios::params::contact_config,
   String $contactgroup_config    = $nagios::params::contactgroup_config,
   String $timeperiod_config      = $nagios::params::timeperiod_config,
+  Integer $nrpe_timeout_seconds  = $nagios::params::nrpe_timeout_seconds,
   String $graphios_perfdata_dir  = lookup('nagios::graphios::perfdata_dir'),
   Hash $nagios_extra_hosts       = {}
 ){
@@ -140,7 +141,7 @@ class nagios::server (
   nagios_command { 'Create NRPE Check':
     ensure       => 'present',
     command_name => 'check_nrpe',
-    command_line => '/usr/lib64/nagios/plugins/check_nrpe -H $HOSTADDRESS$ -c $ARG1$',
+    command_line => "/usr/lib64/nagios/plugins/check_nrpe -H \$HOSTADDRESS$ -c \$ARG1$ -t ${nrpe_timeout_seconds}",
   }
 
   service { 'nagios':

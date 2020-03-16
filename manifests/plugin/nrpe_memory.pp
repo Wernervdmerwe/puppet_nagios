@@ -1,7 +1,7 @@
 # Export Nagios service for check_memory
 class nagios::plugin::nrpe_memory(
   $ensure                        = 'present',
-  $warn                          = 85,
+  $warn                          = 90,
   $crit                          = 95,
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period')
