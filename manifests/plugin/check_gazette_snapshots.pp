@@ -11,7 +11,7 @@ class nagios::plugin::check_gazette_snapshots (
 
   nrpe::command { 'check_gazette_snapshot':
     ensure  => present,
-    command => "grep_file.sh '/var/log/gazetteDB.log' '${snapshot_errors}'",
+    command => "grep_file.sh 'Gazette' '/var/log/gazetteDB.log' '${snapshot_errors}'",
   }
 
 
