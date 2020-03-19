@@ -42,6 +42,12 @@ class nagios::nagios_nrpe (
     notify => Service['nrpe'],
   }
 
+  nrpe::plugin { 'grep_file.sh':
+    ensure => present,
+    source => 'puppet:///modules/nagios/grep_file.sh',
+    notify => Service['nrpe'],
+  }
+
   # Allow NRPE user to run plugin checks as root
   sudo::conf { 'nrpe':
     content  => 'nrpe ALL=(ALL) NOPASSWD: /usr/lib64/nagios/plugins/',
