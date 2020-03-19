@@ -16,7 +16,7 @@ class nagios::plugin::check_gazette_snapshots (
 
 
 # Nagios Check
-  @@nagios_service { "check yum file ${::hostname}":
+  @@nagios_service { "check edgazette snapshot ${::hostname}":
     service_description   => 'EdGazette Snapshot Check',
     check_command         => 'check_nrpe!check_gazette_snapshot',
     host_name             => $::fqdn,
