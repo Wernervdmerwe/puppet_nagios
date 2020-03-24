@@ -1,12 +1,12 @@
 # Export Nagios service for check_memory
 class nagios::plugin::nrpe_memory (
+  String $max_check_attempts,
+  String $check_interval,
   $ensure                        = 'present',
   $warn                          = 75,
   $crit                          = 85,
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period'),
-  String $max_check_attempts     = $nagios::params::max_check_attempts,
-  String $check_interval         = $nagios::params::check_interval
 ){
   # Configure nrpe directories first
   include nrpe

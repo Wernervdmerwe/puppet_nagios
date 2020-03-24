@@ -1,11 +1,11 @@
 # Export Nagios service for check_load
 class nagios::plugin::nrpe_core_load (
+  String $max_check_attempts,
+  String $check_interval,
   $warn                          = 3,
   $crit                          = 5,
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period'),
-  String $max_check_attempts     = $nagios::params::max_check_attempts,
-  String $check_interval         = $nagios::params::check_interval
 ){
   # Configure nrpe directories first
   include nrpe
