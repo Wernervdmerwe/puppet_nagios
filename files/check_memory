@@ -57,7 +57,6 @@ total=`free -m | grep "Mem:" | awk '{print $2}'`
 useAux=$((100*$used))
 result=$(($useAux/$total))
 
-## Código para debug
 if [ "$result" -lt "$warn_level" ]; then
     echo "Memory OK. $result% used. Using $used MB  out of $total MB| Memory=$result%;$warn_level;$critical_level"
     exit 0;
