@@ -4,7 +4,9 @@ class nagios::plugin::nrpe_swap (
   $warn                          = 20,
   $crit                          = 10,
   Integer $notification_interval = lookup('nagios::notification_interval'),
-  String $notification_period    = lookup('nagios::notification_period')
+  String $notification_period    = lookup('nagios::notification_period'),
+  String $max_check_attempts     = $nagios::params::max_check_attempts,
+  String $check_interval         = $nagios::params::check_interval
 ){
   # Configure nrpe directories first
   include nrpe
@@ -23,6 +25,8 @@ class nagios::plugin::nrpe_swap (
       notification_interval => $notification_interval,
       notification_period   => $notification_period,
       require               => Class['nagios'],
+      check_interval        => $check_interval,
+      max_check_attempts    => $max_check_attempts,
     }
   }
 
