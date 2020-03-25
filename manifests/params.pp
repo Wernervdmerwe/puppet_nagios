@@ -1,5 +1,5 @@
 # Set defaults for Nagios classes
-class nagios::params{
+class nagios::params {
   $role                  = 'client'
   $graphios_install      = true
   $slack_service_channel = '#nagios-alerts'
@@ -19,4 +19,6 @@ class nagios::params{
   $contactgroup_config   = '/etc/nagios/nagios_contactgroup.cfg'
   $timeperiod_config     = '/etc/nagios/nagios_timeperiods.cfg'
   $nrpe_timeout_seconds  = 30
+  $check_interval        = '1'
+  $max_check_attempts    = '5'
 }

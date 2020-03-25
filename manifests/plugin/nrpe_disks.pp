@@ -6,7 +6,9 @@ class nagios::plugin::nrpe_disks (
   $check_disks_command           = "check_disk -l -L -w ${warn} -c ${crit} -e -f -M -A -X configfs -X cgroup -X selinuxfs -X sysfs -X proc -X mqueue -X binfmt_misc -X devtmpfs",
   # lint:endignore
   Integer $notification_interval = lookup('nagios::notification_interval'),
-  String $notification_period    = lookup('nagios::notification_period')
+  String $notification_period    = lookup('nagios::notification_period'),
+  String $check_interval         = $nagios::params::check_interval,
+  String $max_check_attempts     = $nagios::params::max_check_attempts,
 ){
   # Configure nrpe directories first
   include nrpe
@@ -27,5 +29,7 @@ class nagios::plugin::nrpe_disks (
     notification_interval => $notification_interval,
     notification_period   => $notification_period,
     require               => Class['nagios'],
+    check_interval        => $check_interval,
+    max_check_attempts    => $max_check_attempts,
   }
 }
