@@ -1,7 +1,5 @@
 # Export Nagios service for check_disks
 class nagios::plugin::nrpe_disks (
-  String $max_check_attempts,
-  String $check_interval,
   $warn                          = '5%',
   $crit                          = '2%',
   # lint:ignore:140chars
@@ -9,6 +7,8 @@ class nagios::plugin::nrpe_disks (
   # lint:endignore
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period'),
+  String $check_interval         = $nagios::params::check_interval,
+  String $max_check_attempts     = $nagios::params::max_check_attempts,
 ){
   # Configure nrpe directories first
   include nrpe

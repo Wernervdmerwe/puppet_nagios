@@ -1,12 +1,12 @@
 # Export Nagios service for check_swap
 class nagios::plugin::nrpe_swap (
-  String $max_check_attempts,
-  String $check_interval,
   $ensure                        = 'present',
   $warn                          = 20,
   $crit                          = 10,
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period'),
+  String $check_interval         = $nagios::params::check_interval,
+  String $max_check_attempts     = $nagios::params::max_check_attempts,
 ){
   # Configure nrpe directories first
   include nrpe
