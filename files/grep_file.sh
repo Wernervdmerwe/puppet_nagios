@@ -59,9 +59,9 @@ for((i=0; i<${#queries[@]}; ++i)); do
   
   # Set relevant exit codes
   if [[ ${state,,} == *"crit"* ]]; then
-    exit_code=1
-  elif [[ ${state,,} == *"warn"* ]]; then
     exit_code=2
+  elif [[ ${state,,} == *"warn"* ]]; then
+    exit_code=1
   fi
   
   # Search through file for obtained query, alerting and exiting script if found. ${foo^^} converts $foo value to uppercase, ${foo,,} to lowercase
