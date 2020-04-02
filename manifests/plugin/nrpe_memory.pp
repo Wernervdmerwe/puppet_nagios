@@ -16,12 +16,7 @@ class nagios::plugin::nrpe_memory (
       source => 'puppet:///modules/nagios/check_memory',
       notify => Service['nrpe'],
   }
-
-  file {'/opt/test':
-    ensure  => present,
-    content => "${check_interval} - ${max_check_attempts}"
-  }
-
+  
   nrpe::command { 'check_memory':
     ensure  => $ensure,
     command => "check_memory -w ${warn} -c ${crit}";
