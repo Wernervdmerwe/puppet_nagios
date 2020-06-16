@@ -59,6 +59,14 @@ class nagios::server (
     notify  => Service['nagios'],
   }
 
+    # Create Nagios template file. This is needed to update the generic-service, so host
+    # contacts override service level contacts.
+  file { '/etc/nagios/objects/templates.cfg':
+    ensure  => 'file',
+    content => epp('nagios/templates.cfg.epp'),
+    notify  => Service['nagios'],
+  }
+
   # Remove old Nagios objects
   $resource_types = [
     'nagios_command',
@@ -178,7 +186,6 @@ class nagios::server (
   if $graphios_install == true {
     include nagios::graphios
   }
-
   # Add host definitions defined in hiera
   # Example host definition:
   #    nagios::server::nagios_extra_hosts:
