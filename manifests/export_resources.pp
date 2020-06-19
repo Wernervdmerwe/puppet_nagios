@@ -18,14 +18,8 @@ class nagios::export_resources (
   $app_fact = $trusted['extensions']['pp_application']
 
   if $app_fact == undef {
-    file {'/opt/testing':
-      ensure  => present,
-      content => 'This app_fact is undef'
-    }
-
     $app_fact_contact_group = ''
   }
-
   else {
     $app_fact_contact_group = "${app_fact}_${::environment}"
   }
