@@ -17,12 +17,13 @@ class nagios::export_resources (
 
   $app_fact = $trusted['extensions']['pp_application']
 
-  if $app_fact == undef {
-    $app_fact_contact_group = ''
-  }
-  else {
-    $app_fact_contact_group = "${app_fact}_${::environment}"
-  }
+  $app_fact_contact_group =
+    if $app_fact == undef {
+      ''
+    }
+    else {
+      "${app_fact}_${::environment}"
+    }
 
   # Create exported resources for Nagios hosts
   @@nagios_host { $trusted['certname']:
@@ -33,7 +34,7 @@ class nagios::export_resources (
     hostgroups            => $hostgroups,
     tag                   => $tag,
     notification_interval => $notification_interval,
-    contact_groups        => "${app_fact_contact_group},admins"
+    contact_groups        => "${$app_fact_contact_group},admins"
   }
 
   # Create exported resources for Nagios services
