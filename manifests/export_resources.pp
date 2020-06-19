@@ -15,6 +15,21 @@ class nagios::export_resources (
 
   # TODO: check if we need a different host template for windows servers
 
+  $app_fact = $trusted['extensions']['pp_application']
+
+  if $app_fact == undef {
+    file {'/opt/testing':
+      ensure  => present,
+      content => 'This app_fact is undef'
+    }
+
+    $app_fact_contact_group = ''
+  }
+
+  else {
+    $app_fact_contact_group = "${app_fact}_${::environment}"
+  }
+
   # Create exported resources for Nagios hosts
   @@nagios_host { $trusted['certname']:
     ensure                => present,
@@ -24,7 +39,7 @@ class nagios::export_resources (
     hostgroups            => $hostgroups,
     tag                   => $tag,
     notification_interval => $notification_interval,
-    contact_groups        => "${trusted['extensions']['pp_application']},admins"
+    contact_groups        => "${app_fact_contact_group},admins"
   }
 
   # Create exported resources for Nagios services
