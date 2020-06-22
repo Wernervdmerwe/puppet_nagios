@@ -25,6 +25,8 @@ class nagios::export_resources (
       "${app_fact}_${::environment}"
     }
 
+  $contact_groups = "${$app_fact_contact_group},admins"
+
   # Create exported resources for Nagios hosts
   @@nagios_host { $trusted['certname']:
     ensure                => present,
@@ -34,7 +36,7 @@ class nagios::export_resources (
     hostgroups            => $hostgroups,
     tag                   => $tag,
     notification_interval => $notification_interval,
-    contact_groups        => "${$app_fact_contact_group},admins"
+    contact_groups        => $contact_groups
   }
 
   # Create exported resources for Nagios services
