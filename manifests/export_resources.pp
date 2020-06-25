@@ -18,7 +18,7 @@ class nagios::export_resources (
   $app_fact = $trusted['extensions']['pp_application']
 
   $app_fact_contact_group =
-    if $app_fact == undef {
+    if $app_fact == undef or length($app_fact) == 0 {
       ''
     }
     else {
