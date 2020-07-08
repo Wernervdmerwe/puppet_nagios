@@ -17,22 +17,14 @@ class nagios::export_resources (
 
   $app_fact = $trusted['extensions']['pp_application']
 
-  # if the app_fact is defined as empty string set var app_fact_contact_group to undef 
-  # to avoid defining wrong contact group name "_${::environment}"
-  $app_fact_contact_group =
-    if $app_fact == '' {
-      undef
-    }
-    else {
-      "${app_fact}_${::environment}"
-    }
-
-  if $app_fact_contact_group {
-    $contact_groups = "${$app_fact_contact_group},admins"
-  }
-  else {
+  # if the app_fact is defined as empty string or is undef define only 'admins' group in contact_group
+  if $app_fact == '' or $app_fact == undef {
     $contact_groups = 'admins'
   }
+  else {
+    $contact_groups = "${app_fact}_${::environment},admins"
+  }
+
   # Create exported resources for Nagios hosts
   @@nagios_host { $trusted['certname']:
     ensure                => present,
