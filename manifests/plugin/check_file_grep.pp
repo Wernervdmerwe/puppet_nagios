@@ -28,7 +28,7 @@ define nagios::plugin::check_file_grep (
 
   nrpe::command { "check_${alert_context}_file":
     ensure  => present,
-    command => "grep_file.sh '${alert_context}' '${file_path}' '${grep_params}'",
+    command => "grep_file.sh '${alert_context}' '${file_path}' '${grep_params}' ${file_must_exist}",
   }
 
 
