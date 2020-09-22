@@ -1,18 +1,22 @@
 # Export Nagios service to check yum patching state
 # Parameters:
-#     $grep_params:   A list of comma-separated queries to grep a particular file for, each query must 
-#                     be separated by a pipe | symbol, with the first value the word/phrase to search for,
-#                     and the second is the alert level for that phrase, i.e. 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning'
+#     $grep_params:     A list of comma-separated queries to grep a particular file for, each query must 
+#                       be separated by a pipe | symbol, with the first value the word/phrase to search for,
+#                       and the second is the alert level for that phrase, i.e. 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning'
 #
-#     $alert_context: A description of this grep check, i.e. 'Gazette'
+#     $alert_context:   A description of this grep check, i.e. 'Gazette'
 #
-#     $file_path:     The file (full path) to grep through, i.e '/var/log/gazetteDB.log'
+#     $file_path:       The file (full path) to grep through, i.e '/var/log/gazetteDB.log'
+#
+#     $file_must_exist: Determines if the file must exist at all times, or not. If true, nagios will alert on missing file
+#                       If false, nagios will return OK if no file exists
 #
 #
 define nagios::plugin::check_file_grep (
   String $grep_params,
   String $alert_context,
   String $file_path,
+  Boolean $file_must_exist       = true,
   Integer $notification_interval = lookup('nagios::notification_interval'),
   String $notification_period    = lookup('nagios::notification_period'),
 
