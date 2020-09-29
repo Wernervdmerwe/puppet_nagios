@@ -16,9 +16,9 @@
 # ------------
 #
 # Usage:
-# -----  This script requires three arguments, the first being an identifier to show what the alert context is (e.g. Gazette), the second being
-#        the (full-path) file to grep through, and the third is a comma-delimited string of phrases or words to query, also containing the
-#        nagios alert state separated from the phrase by a hash #. 
+# -----  This script requires four arguments, the first being an identifier to show what the alert context is (e.g. Gazette), the second being
+#        the (full-path) file to grep through, the third is a comma-delimited string of phrases or words to query, also containing the
+#        nagios alert state separated from the phrase by a hash #, and the fourth defines whether the file must exist or not, at all times.
 #        E.g:
 #             grep_file.sh 'Gazette' '/var/log/gazetteDB.log' 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning'
 #
@@ -42,13 +42,17 @@ context=$1
 file=$2
 # Assign phrases and nagios alert states to an array of strings
 queries=($3)
+# Determine whether the file must exist or not
+file_must_exist=$4
 # Default exit code value - relates to UNKOWN alert for nagios
 exit_code=3
 
 # If file for grepping does not exist, exit script and alert
-if [ ! -f $file ]; then
-  echo "File ${file} does not exist!! Resolve syntax error for nagios check!"
-  exit 3
+if [ "$file_must_exist" = true ]; then
+  if [ ! -f $file ]; then
+    echo "File ${file} does not exist!! Resolve syntax error for nagios check!"
+    exit 3
+  fi
 fi
 
 # Loop through array searching for each query, ordered by first-in,first-checked
