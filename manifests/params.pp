@@ -21,7 +21,7 @@ class nagios::params {
   $nrpe_timeout_seconds  = 30
   $check_interval        = '1'
   $max_check_attempts    = '5'
-  $excluded_mount_points = [],
-  $notification_interval = 240,
-  $notification_period   = '24x7',
+  $excluded_mount_points = []
+  $notification_interval = 240
+  $notification_period   = '24x7'
 }

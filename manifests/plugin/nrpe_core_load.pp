@@ -6,7 +6,7 @@ class nagios::plugin::nrpe_core_load (
   String $notification_period    = $nagios::params::notification_period,
   String $check_interval         = $nagios::params::check_interval,
   String $max_check_attempts     = $nagios::params::max_check_attempts,
-){
+) inherits nagios::params {
   # Configure nrpe directories first
   include nrpe
 
