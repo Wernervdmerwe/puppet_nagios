@@ -3,6 +3,8 @@
 class nagios (
   $role           = $nagios::params::role,
   $nagios_servers = lookup('nrpe::allowed_hosts', Array[String], 'first', undef),
+  $notification_interval = 60,
+  $notification_period = '24x7',
   $notify_slack   = false,
   $tag            = $::environment,
 ) inherits nagios::params {
