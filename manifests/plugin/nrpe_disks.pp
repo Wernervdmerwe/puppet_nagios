@@ -1,15 +1,15 @@
 # Export Nagios service for check_disks
 class nagios::plugin::nrpe_disks (
-  $warn                          = '5%',
-  $crit                          = '2%',
+  $warn                                = '5%',
+  $crit                                = '2%',
+  Integer $notification_interval       = lookup('nagios::notification_interval'),
+  String $notification_period          = lookup('nagios::notification_period'),
+  String $check_interval               = lookup('nagios::check_interval'),
+  String $max_check_attempts           = lookup('nagios::max_check_attempts'),
+  Array[String] $excluded_mount_points = lookup('nagios::excluded_mount_points'),
   # lint:ignore:140chars
   $default_check_disks_command = "check_disk -l -w ${warn} -c ${crit} -e -f -M -A -X configfs -X cgroup -X selinuxfs -X sysfs -X proc -X mqueue -X binfmt_misc -X devtmpfs",
   # lint:endignore
-  Integer $notification_interval       = lookup('nagios::notification_interval'),
-  String $notification_period          = lookup('nagios::notification_period'),
-  String $check_interval               = $nagios::params::check_interval,
-  String $max_check_attempts           = $nagios::params::max_check_attempts,
-  Array[String] $excluded_mount_points = $nagios::params::excluded_mount_points
 ){
   # Configure nrpe directories first
   include nrpe

@@ -7,7 +7,7 @@
 # provided alert value
 #
 # Created for:
-# ------------ Ministry of Education, Nagios monitoring via Puppet
+# ------------ Nagios monitoring via Puppet
 #
 # Created date and author:
 # ------------ 18/03/2020, Jasper Connery
@@ -20,7 +20,7 @@
 #        the (full-path) file to grep through, the third is a comma-delimited string of phrases or words to query, also containing the
 #        nagios alert state separated from the phrase by a hash #, and the fourth defines whether the file must exist or not, at all times.
 #        E.g:
-#             grep_file.sh 'Gazette' '/var/log/gazetteDB.log' 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning'
+#             grep_file.sh 'Gazette' '/var/log/gazetteDB.log' 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning' false
 #
 #        Each 'query' is processed in the order they appear - i.e. if 'Snapshot failed' is found, it will alert on that 
 #	       and exit the script, not continuing to search for 'No disk space' or 'Timeout'. 
@@ -28,7 +28,7 @@
 #        The phrase to be searched for is case-insensitive
 #
 # Limitations: 
-# ----------- Cannot search for a phrase that contains a comma or '|''' - to be resolved (eventually)
+# ----------- Cannot search for a phrase that contains a comma or '|' - to be resolved (eventually)
 #
 
 

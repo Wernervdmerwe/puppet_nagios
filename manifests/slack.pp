@@ -2,8 +2,8 @@
 class nagios::slack (
   String $opt_token,
   String $opt_domain,
-  String $slack_service_channel = $nagios::params::slack_service_channel,
-  String $slack_host_channel = $nagios::params::slack_host_channel,
+  String $slack_service_channel = lookup('nagios::slack_service_channel', String, 'first', undef),
+  String $slack_host_channel = lookup('nagios::slack_host_channel', String, 'first', undef),
 ){
   package {['perl-libwww-perl','perl-Crypt-SSLeay', 'perl-LWP-Protocol-https']:
     ensure => 'installed',
