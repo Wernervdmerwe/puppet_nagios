@@ -3,5 +3,32 @@
 nagios::notification_interval: 240
 nagios::notification_period: '24x7'
 nagios::tag: "%{::environment}"
+nagios::slack_service_channel: '#nagios-alerts'
+nagios::slack_host_channel: '#nagios-alerts'
+nagios::check_interval: '1'
+nagios::max_check_attempts: '5'
+nagios::excluded_mount_points: []
+
 nagios::graphios::graphite_host: '127.0.0.1'
 nagios::graphios::perfdata_dir: '/var/spool/nagios/graphios'
+
+nagios::server::role: 'client'
+nagios::server::graphios_install: true
+nagios::server::puppetdb_check_enable: true
+nagios::server::log_dir: '/var/log/nagios/nagios.log'
+nagios::server::date_format: 'us'
+nagios::server::debug_level: 256
+nagios::server::debug_verbosity: 2
+nagios::server::command_config: '/etc/nagios/nagios_command.cfg'
+nagios::server::hostgroup_config: '/etc/nagios/nagios_hostgroup.cfg'
+nagios::server::host_config: '/etc/nagios/nagios_host.cfg'
+nagios::server::service_config: '/etc/nagios/nagios_service.cfg'
+nagios::server::contact_config: '/etc/nagios/nagios_contact.cfg'
+nagios::server::contactgroup_config: '/etc/nagios/nagios_contactgroup.cfg'
+nagios::server::timeperiod_config: '/etc/nagios/nagios_timeperiods.cfg'
+nagios::server::nrpe_timeout_seconds: 30
+nagios::server::notification_interval: 240
+nagios::server::notification_period: '24x7'
+
+
+

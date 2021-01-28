@@ -4,7 +4,8 @@
 #                       be separated by a pipe | symbol, with the first value the word/phrase to search for,
 #                       and the second is the alert level for that phrase, i.e. 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning'
 #
-#     $alert_context:   A description of this grep check, i.e. 'Gazette'
+#     $alert_context:   A description of this grep check, i.e. 'Gazette' - this MUST be unique per check otherwise puppet will error on
+#                       duplicate declarations
 #
 #     $file_path:       The file (full path) to grep through, i.e '/var/log/gazetteDB.log'
 #
