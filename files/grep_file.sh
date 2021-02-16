@@ -16,11 +16,11 @@
 # ------------
 #
 # Usage:
-# -----  This script requires four arguments, the first being an identifier to show what the alert context is (e.g. Gazette), the second being
+# -----  This script requires four arguments, the first being an identifier to show what the alert context is (e.g. prod_db), the second being
 #        the (full-path) file to grep through, the third is a comma-delimited string of phrases or words to query, also containing the
 #        nagios alert state separated from the phrase by a hash #, and the fourth defines whether the file must exist or not, at all times.
 #        E.g:
-#             grep_file.sh 'Gazette' '/var/log/gazetteDB.log' 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning' false
+#             grep_file.sh 'prod_db' '/var/log/prodDB.log' 'Snapshot failed|Crit,No disk space|Crit,Timeout|Warning,SUCCESSFUL|OK' false
 #
 #        Each 'query' is processed in the order they appear - i.e. if 'Snapshot failed' is found, it will alert on that 
 #	       and exit the script, not continuing to search for 'No disk space' or 'Timeout'. 
@@ -50,8 +50,9 @@ exit_code=3
 # If file for grepping does not exist, exit script and alert
 if [ "$file_must_exist" = true ]; then
   if [ ! -f $file ]; then
-    echo "File ${file} does not exist!! Resolve syntax error for nagios check!"
-    exit 3
+    echo "File ${file} does not exist!! Either syntax or application error!"
+    IFS=$OIFS
+    exit 2
   fi
 fi
 
@@ -66,6 +67,8 @@ for((i=0; i<${#queries[@]}; ++i)); do
     exit_code=2
   elif [[ ${state,,} == *"warn"* ]]; then
     exit_code=1
+  elif [[ ${state,,} == *"ok"* ]]; then
+    exit_code=0
   fi
   
   # Search through file for obtained query, alerting and exiting script if found. ${foo^^} converts $foo value to uppercase, ${foo,,} to lowercase
