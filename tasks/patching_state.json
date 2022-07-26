@@ -1,0 +1,10 @@
+{
+    "description": "Task used to manage the patching state file generated after patching if any errors occur",
+    "input_method": "environment",
+    "parameters": {
+      "action": {
+        "description": "Choose either to remove the patching state file, or display it's contents.",
+        "type": "Enum[remove,display]"
+      }
+  }
+}
